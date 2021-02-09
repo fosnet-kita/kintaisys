@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./../../static/css/output.css">
+    <title>一覧出力</title>
+
+</head>
+
+<body>
+    <form action="{% url  'kintaitouroku' %}" method="POST" id="kintaitouroku" name="kintaitouroku">
+    {% csrf_token %}
+    <input type="submit" style="width:139px;" valign="middle" value="戻る"  name= "project" id="project"  class="btn_normal" />
+    </form>
+    出力月
+    <form action="{% url  'output2' %}" method="post">
+    {% csrf_token %}
+    <input type="month" name="monthselect" onchange="submit()" value="{{ monthselect }}">
+
+
+        <table id="Table22" class="tbl_input">
+                    <tr>
+			            <th class="lbl_title4" style="width:39px">日</th>
+			            <th class="lbl_title4" style="width:38px">曜日</th>
+			            <th class="lbl_title4" style="width:78px">始業時刻</th>
+			            <th class="lbl_title4" style="width:78px">終業時刻</th>
+			            <th class="lbl_title4" style="width:57px">実働</th>
+			            <th class="lbl_title4" style="width:57px">残業</th>
+			            <th class="lbl_title4" style="width:57px">休憩</th>
+			            <th class="lbl_title4" style="width:116px">休暇理由</th>
+			            <th class="lbl_title4" style="width:87px">届出種類</th>
+
+                    </tr>
+                </table>
+        
+        <table class="output22" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdCalendar" style="border-collapse:collapse;">
+        {% for pr in listaaaa %}
+        {% if pr.ymd %}
+		<tr class="{{ pr.ymd  | date:"D"}}">
+			<td  valign="middle" style="height:28px;width:40px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenYmd">{{ pr.ymd  | date:"j"}}</span>
+                                </td><td class="center" valign="middle" style="width:40px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenWeek">{{ pr.ymd  | date:"D"}}</span>
+                                </td><td class="center" valign="middle" style="width:85px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenTimeF">{{ pr.starttime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:80px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenTimeT">{{ pr.endtime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblWorkTime">{{ pr.worktime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblOverTime">{{ pr.overtime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblRestTime">{{ pr.resttime }}</span><br />
+                                    </td>
+                                    <td class="center" valign="middle" style="width:120px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblholidayriyu">{{ pr.holidayriyu }}</span><br />
+                                    </td>
+                                    <td class="center" valign="middle" style="width:120px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblRestTime">{{ pr.todoke_tikoku }} {{ pr.todoke_soutai }}{{ pr.todoke_midnight }} {{ pr.todoke_hayade }}{{ pr.todoke_irregular}} {{ pr.todoke_holiwork }}</span><br />
+                                    </td>
+
+		</tr>
+		{% else %}
+		<tr class="{{ pr  | date:"D"}}">
+			<td  valign="middle" style="height:28px;width:40px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenYmd">{{ pr | date:"j"}}</span>
+                                </td><td class="center" valign="middle" style="width:40px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenWeek">{{ pr  | date:"D"}}</span>
+                                </td><td class="center" valign="middle" style="width:85px;white-space:nowrap;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenTimeF">{{ pr.starttime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:80px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblCalenTimeT">{{ pr.endtime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblWorkTime">{{ pr.worktime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblOverTime">{{ pr.overtime }}</span><br />
+                                </td><td class="center" valign="middle" style="width:60px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblRestTime">{{ pr.resttime }}</span><br />
+                                    </td>
+                                    <td class="center" valign="middle" style="width:120px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblholidayriyu">{{ pr.holidayriyu }}</span><br />
+                                    </td>
+                                    <td class="center" valign="middle" style="width:120px;">
+                                    <span id="ctl00_contents_grdCalendar_ctl02_lblRestTime">{{ pr.todoke_tikoku }} {{ pr.todoke_soutai }}{{ pr.todoke_midnight }} {{ pr.todoke_hayade }}{{ pr.todoke_irregular}} {{ pr.todoke_holiwork }}</span><br />
+                                    </td>
+
+		</tr>
+		{% endif %}
+		{% endfor %}
+		
+
+    </table>
+    
+    <table id="Table4" class="tbl_input">
+        <tr>
+            <th class="lbl_title4" style="width:80px">実働時間</th>
+            <td class="center" style="width:60px">
+                <span id="ctl00_contents_lblJitudoTm" style="display:inline-block;width:50px;">{{ sumwork }}H</span>
+            </td>
+        </tr>
+        <tr>
+            <th class="lbl_title4" style="width:80px">残業時間</th>
+            <td class="center" style="width:60px">
+                <span id="ctl00_contents_lblZangyoTm" style="display:inline-block;width:50px;">{{ overwork }}H</span>
+            </td>
+        </tr>
+        <tr>
+            <th class="lbl_title4" style="width:80px">休憩時間</th>
+            <td class="center" style="width:60px">
+                <span id="ctl00_contents_lblRestTm" style="width:50px">{{ resttime }}H</span>
+            </td>
+        </tr>
+
+    </table>
+    </form>
+
+       
+
+</body>
+
+</html>

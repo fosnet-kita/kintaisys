@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      {% block title %}ログイン{% endblock %}
+    </title>
+    <style>
+        body {
+          padding : 10px;
+        }
+        div.container {
+          min-width:600px;
+        }
+        nav ul#menu {
+            margin:0px;
+            padding:0px;
+        }
+        nav ul#menu li {
+            float:right;
+            list-style-type:none;
+            text-decoration: underline;
+            padding-left: 10px;
+        }
+        div.header {
+          padding: 10px;
+        }
+        div.header * {
+          color: white !important;
+        }
+        div.header .title {
+          font-size: 1.2em;
+        }
+        {% block styles %}{% endblock %}
+    </style>
+</head>
+<body>
+<div class="container">
+  <div class="inner">
+    <div class="text-right">{{ form_name }}</div>
+    <div class="row header mysystem-header">
+      <div class="col-sm title">
+        {% block headertitle %}{% endblock %}
+      </div>
+      <div class="col-sm">
+        <nav class="pull-right">
+            <ul id="menu">
+              {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}" class="logout">ログアウト</a></li>
+                {% if form_name == "password_change" %}
+                {% else %}
+                   
+                {% endif %}
+              {% else %}
+              {% endif %}
+            </ul>
+        </nav>
+      </div>
+    </div>
+    <br/>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

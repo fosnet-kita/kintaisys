@@ -1,0 +1,217 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=shift_jis" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" /><title>勤怠入力画面
+</title><link href="../css/header.css" type="text/css" rel="stylesheet" /><link href="../css/common.css" type="text/css" rel="stylesheet" />
+        <script language="javascript" type="text/javascript" src='../js/menu.js'></script>
+        
+    <meta http-equiv="Content-Type"        content="text/html; charset=shift_jis" />
+    <meta http-equiv="Content-Language"    content="ja" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+    <meta http-equiv="Content-Style-Type"  content="text/css" />
+
+    <title>勤怠入力画面</title>
+
+    <link href="../css/contents.css" type="text/css" rel="stylesheet" />
+    <link href="../css/common.css" type="text/css" rel="stylesheet" />
+    <script language="javascript" type="text/javascript" src="../js/common.js"></script>
+    <script language="javascript" type="text/javascript" src="../js/search.js"></script>
+</head>
+    <body id="ctl00_SICGyoumu" onload="javascript:return menuSet();">
+        <form name="aspnetForm" method="post" action="./workreport_inp.aspx" id="aspnetForm">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+</div>
+
+
+入力日<br>
+<div id="ctl00_contents_Panel2" 
+style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">              
+                <table id="Table22" class="tbl_input"  border="1">
+
+                    <tr>
+                        
+
+                        <select id="yearmonth" name="yearmonth" style="width: 120px;">
+                            <option value="303">2020    / 11 /  20</option>
+                        </select>(金)
+
+			            <th class="lbl_title4" style="width:78px">始業時刻</th>
+			            <th class="lbl_title4" style="width:78px">終業時刻</th>
+                        <th class="lbl_title4" style="width:78px">残業時間</th>
+                        <td class="lbl_title4" style="width:78px" rowspan="2">
+                            <button style="width: 100%;height: 100%;">出欠選択</button></td>
+                   
+
+                    </tr>
+                
+                        <tr>
+
+                        
+                            <td class="center" valign="middle" style="background-color:White;width:60px; text-align: center;">
+                                <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiHmsF"></span><br />
+                            
+                                                </td><td class="center" valign="middle" style="width:80px; text-align: center;">
+                                                    <span id="ctl00_contents_grdCalendar_ctl21_lblCalenTimeF"></span><br />
+                                                </td><td class="center" valign="middle" style="width:80px; text-align: center;">
+                                                    <span id="ctl00_contents_grdCalendar_ctl21_lblCalenTimeT"></span><br />
+                                                </td>
+                        </tr>
+                    
+                </table>
+            </div>
+                <br>
+
+                            <td>
+                                <br>
+                                プロジェクト内訳
+                                <br>
+                                <div id="ctl00_contents_Panel2" style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">
+                                    
+                                    <br>
+                                <tr>
+                                 <td class="left" >
+                                  <input type="submit" name="ctl00$contents$btnDeleteH" value="プロジェクト登録" id="ctl00_contents_btnDeleteH" class="btn_normal2" style="width:100%"/>     
+                                 </td>
+                                 <br>
+                                </tr>
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+    <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiProject"></span>
+</td>
+
+                                        </tr><tr>
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                           
+                                                                                            <select name="ctl00$contents$ddlKotei" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$ddlKotei\&#39;,\&#39;\&#39;)&#39;, 0)" id="ctl00_contents_ddlKotei"  class="ddl_normal" style="width:95%;">
+                                                                                                <option value="ThV20044-w00/T01"></option>
+                                                                                            </select>
+                                                                                        <!-- </td><td class="txt_code_indent" align="left" valign="middle" style="background-color:White;width:140px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiGyoumu">調査・探索</span><br />
+                                                                                        </td> -->
+                                                                                        
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                                <select name="ctl00$contents$ddlGyoumu" id="ctl00_contents_ddlGyoumu" class="ddl_normal" style="width:100%;">
+                                                                                                    <option value="ThV20044-w00/T01"></option>
+                                                    </select>
+                                                                                            </td><br /></td>
+                                                                                        <!-- <td class="center" valign="middle" style="background-color:White;width:60px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiHmsT">12:00</span><br />
+                                                                                        </td><td class="center" valign="middle" style="background-color:White;width:60px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblRestTm">0.5</span><br />
+                                                                                        </td> -->
+                                        </tr><tr>
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <!-- <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiProject">本社　　社内業務</span> -->
+                                                                                        <!-- </td><td class="txt_code_indent" align="left" valign="middle" style="background-color:White;width:140px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiGyoumu">資料調査検討</span><br />
+                                                                                        </td> -->
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span><br />
+                                                                                        </td><th scope="col">休憩</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblRestTm"></span><br />
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                    </table>
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+    <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiProject"></span>
+</td>
+
+                                        </tr><tr>
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                           
+                                                                                            <select name="ctl00$contents$ddlKotei" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$ddlKotei\&#39;,\&#39;\&#39;)&#39;, 0)" id="ctl00_contents_ddlKotei"  class="ddl_normal" style="width:95%;">
+                                                                                                <option value="ThV20044-w00/T01"></option>
+                                                                                            </select>
+                                                                                        <!-- </td><td class="txt_code_indent" align="left" valign="middle" style="background-color:White;width:140px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiGyoumu">調査・探索</span><br />
+                                                                                        </td> -->
+                                                                                        
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                                <select name="ctl00$contents$ddlGyoumu" id="ctl00_contents_ddlGyoumu" class="ddl_normal" style="width:100%;">
+                                                                                                    <option value="ThV20044-w00/T01"></option>
+                                                    </select>
+                                                                                            </td><br /></td>
+                                                                                        <!-- <td class="center" valign="middle" style="background-color:White;width:60px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiHmsT">12:00</span><br />
+                                                                                        </td><td class="center" valign="middle" style="background-color:White;width:60px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl02_lblRestTm">0.5</span><br />
+                                                                                        </td> -->
+                                        </tr><tr>
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <!-- <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiProject">本社　　社内業務</span> -->
+                                                                                        <!-- </td><td class="txt_code_indent" align="left" valign="middle" style="background-color:White;width:140px;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiGyoumu">資料調査検討</span><br />
+                                                                                        </td> -->
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span><br />
+                                                                                        </td><th scope="col">休憩</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblRestTm"></span><br />
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                    </table>
+                                </div>
+</div>
+                                <br>
+                                <table id="Table5" width="100%" class="tbl_title">
+					                <tr>
+                                        <td class="left">
+                                            <input type="submit" name="ctl00$contents$btnExecH" value="勤怠登録" id="ctl00_contents_btnExecH" class="btn_normal2" style="width:440px" />
+                                           
+                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="left">
+                                            <input type="submit" name="ctl00$contents$btnDeleteH" value="一覧出力" id="ctl00_contents_btnDeleteH" class="btn_normal2" style="width:440px"/>
+                                           
+                                            
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+	            <table id="Table3" width="100%" class="tbl_title">
+				    <tr>
+                        <td class="left">
+                            <span id="ctl00_contents_lblErrMsgF" class="lbl_error"></span>
+                        </td>
+                    </tr>
+                </table>
+	        </div>
+		</div>
+		<div class="Dummy"></div>
+    </div>
+
+            </div>
+        
+
+    </body>
+</html>

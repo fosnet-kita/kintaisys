@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language"    content="ja" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type"  content="text/css" />
+    <title>出欠選択画面</title>
+</head>
+<body>
+    <table border="1" align="center">
+        <thead>
+          <tr>
+            <th class="lbl_title4" style="width:65px">出欠区分</th>
+            <td><select name="Absentkbn" onchange="Abscalc(this.value)" 
+                id="Absentkbn"
+                class="ddl_normal" style="width: 90px;">
+                <option selected="selected" value=""></option>
+                    <option value="0">出勤</option>
+                    <option value="1">欠勤</option>
+                </select>
+                </td>
+                <th class="lbl_title4" style="width:100px" border="1">休暇区分</th>
+                <td><select id="holidaykbn" name="holidaykbn"
+                    onchange="calc(this.value)" 
+                    class="ddl_normal" style="width: 90px;" form="kintaiabs">
+                    <option selected="selected" value=""></option>
+                </select></td>
+          </tr>
+        </thead>
+        <tbody>
+<tr>
+            <th class="lbl_title4" style="width:65px">取得事由</th>
+                            <td class="lbl_indent height24" colspan="3">
+                                <select name="riyu" id="riyu"  class="ddl_normal" style="width:100%;"form="kintaiabs" ><option selected="selected" value=""></option></select>
+<script>
+function Abscalc(value){
+
+ Abskbn = document.getElementById("Absentkbn").value;
+ HorikbnId = document.getElementById("holidaykbn");
+ TodoledeId = document.getElementById("Todokede");
+ TodoledeId0 = document.getElementById("Todokede0");
+ TodoledeId1 = document.getElementById("Todokede1");
+ TodoledeId2 = document.getElementById("Todokede2");
+ TodoledeId3 = document.getElementById("Todokede3");
+ TodoledeId4 = document.getElementById("Todokede4");
+ TodoledeId5 = document.getElementById("Todokede5");
+ 
+ HorikbnId.innerHTML = '<select id="holidaykbn" name="holidaykbn" onchange="calc(this.value)" class="ddl_normal" style="width: 90px;"> </select>';
+ document.getElementById("errorh").innerHTML  = "";
+ document.getElementById("errorriyu").innerHTML  = "";
+ document.getElementById("errorkubun").innerHTML  = "";
+ document.getElementById("errorhensoku1").innerHTML  = "";
+ document.getElementById("errorhensoku2").innerHTML  = "";
+ document.getElementById("errorhensoku3").innerHTML  = "";
+ document.getElementById("errorholi1").innerHTML  = "";
+ document.getElementById("errorholi2").innerHTML  = "";
+ 
+ if(Abskbn == "0") {
+  var jFoods = [
+
+    {cd:"取得なし", label:"取得なし"},
+                    
+    {cd:"半休等", label:"半休等"}
+
+  ];
+
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   HorikbnId.appendChild(op);
+
+  });
+  
+  TodoledeId0.disabled = false;
+  TodoledeId1.disabled = false;
+  TodoledeId2.disabled = false;
+  TodoledeId3.disabled = false;
+  TodoledeId4.disabled = false;
+  TodoledeId5.disabled = false;
+
+ 
+ }
+ 
+ if(Abskbn == "1") {
+  var jFoods = [
+
+    {cd:"",  label:""},
+    {cd:"有給休暇", label:"有給休暇"},
+    {cd:"特休・その他休暇", label:"特休・その他休暇"},
+    {cd:"代休", label:"代休"},
+    {cd:"その他", label:"その他"}
+
+  ];
+
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   HorikbnId.appendChild(op);
+
+  });
+  
+  TodoledeId0.disabled = true;
+  TodoledeId1.disabled = true;
+  TodoledeId2.disabled = true;
+  TodoledeId3.disabled = true;
+  TodoledeId4.disabled = true;
+  TodoledeId5.disabled = true;
+ 
+ }
+
+}
+
+function calc(value){
+
+
+ Horikbn = document.getElementById("holidaykbn").value;
+ category = document.getElementById("riyu");
+ category.innerHTML =  '<select name="riyu" id="riyu" onchange="riyu(this.value)" class="ddl_normal" style="width:100%;"></select>';
+ 
+
+
+ 
+
+ if(Horikbn == "有給休暇") {
+  var jFoods = [
+
+    {cd:"",  label:""},
+    {cd:"年次休暇(一般)", label:"年次休暇(一般)"},                   
+    {cd:"年次休暇(結婚)", label:"年次休暇(結婚)"},
+    {cd:"年次休暇(忌引)", label:"年次休暇(忌引)"},
+    {cd:"年次休暇(転勤赴任)", label:"年次休暇(転勤赴任)"},
+    {cd:"年次休暇(出産)", label:"年次休暇(出産)"},
+    {cd:"年次休暇(入院)", label:"年次休暇(入院)"}
+
+  ];
+  
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   category.appendChild(op);
+
+  });
+
+ 
+ }
+ 
+ else if(Horikbn == "特休・その他休暇") {
+  var jFoods = [
+
+    {cd:"",  label:""},
+    {cd:"特別休暇(結婚)", label:"特別休暇(結婚)"},
+    {cd:"特別休暇(忌引)", label:"特別休暇(忌引)"},
+    {cd:"特別休暇(夏休み)", label:"特別休暇(夏休み)"},
+    {cd:"特別休暇(年末年始)", label:"特別休暇(年末年始)"},
+    {cd:"特別休暇(病気けが)", label:"特別休暇(病気けが)"},
+    {cd:"特別休暇(転勤赴任)", label:"特別休暇(転勤赴任)"},
+    {cd:"特別休暇(その他)", label:"特別休暇(その他)"},
+    {cd:"その他休暇(出産)", label:"その他休暇(出産)"},
+    {cd:"その他休暇(育児)", label:"その他休暇(育児)"},
+    {cd:"その他休暇(介護)", label:"その他休暇(介護)"},
+    {cd:"その他休暇(公休等)", label:"その他休暇(公休等)"},
+
+  ];
+  
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   category.appendChild(op);
+
+  });
+
+ 
+ }
+ 
+ 
+  else if(Horikbn == "代休") {
+  var jFoods = [
+
+    {cd:"",  label:""},
+    {cd:"代休(過去休出分)", label:"代休(過去休出分)"},
+    {cd:"代休(未来予定分)", label:"代休(未来予定分)"},
+    {cd:"代休(明け休分)", label:"代休(明け休分)"},
+    {cd:"振休(過去分)", label:"振休(過去分)"},
+    {cd:"振休(未来予定分)", label:"振休(未来予定分)"},
+    {cd:"振休(明け休分)", label:"振休(明け休分)"}
+  ];
+  
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   category.appendChild(op);
+
+  });
+
+ 
+ }
+ 
+ 
+ else if(Horikbn == "その他") {
+  var jFoods = [
+
+    {cd:"",  label:""},
+    {cd:"休み(病気：有給外)", label:"休み(病気：有給外)"},
+    {cd:"休み(けが：有給外)", label:"休み(けが：有給外)"},
+    {cd:"休み(私用：有給外)", label:"休み(私用：有給外)"},
+    {cd:"休み(その他：有給外)", label:"休み(その他：有給外)"},
+    {cd:"欠勤(謹慎)", label:"欠勤(謹慎)"},
+    {cd:"欠勤(不明)", label:"欠勤(不明)"}
+  ];
+  
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   category.appendChild(op);
+
+  });
+  
+  }
+  
+  
+ else if(Horikbn == "半休等") {
+  var jFoods = [
+
+    {cd:"", label:""},
+
+    {cd:"午前半休", label:"午前半休"},
+                    
+    {cd:"午後半休", label:"午後半休"},
+
+    {cd:"時間休", label:"時間休"}
+
+  ];
+
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+   category.appendChild(op);
+
+  });
+
+ 
+ } else {
+      var jFoods = [
+ 
+
+  ];
+
+  jFoods.forEach(function(value) {
+
+    var op = document.createElement("option");
+
+    op.value = value.cd;
+
+    op.text = value.label;
+
+    category.appendChild(op);
+
+  });
+  return;
+ 
+ }
+
+
+}
+
+
+
+function clickFire(){
+
+    //ウィンドウオブジェクトが存在していない時警告してフラグをfalseに
+    if ( !window.opener || !Object.keys(window.opener).length ) {
+        window.alert('親画面が存在しません')
+    }
+    
+    
+
+    
+    console.log(document.getElementById("Absentkbn").value)
+    console.log(document.getElementById("holidaykbn").value)
+    console.log(document.getElementById("riyu").value)
+    console.log(document.getElementById("Todokede3").value)
+    console.log(document.getElementById("Todokede4").value)
+    
+    window.opener.document.getElementById("abs").value = ''
+    window.opener.document.getElementById("absproject").value = ''
+    window.opener.document.getElementById("absdisplay").innerHTML = ''
+    
+    window.opener.document.getElementById("chikoku").value = ''
+    window.opener.document.getElementById("chikokuproject").value = ''
+    window.opener.document.getElementById("chikokudisplay").innerHTML = ''
+    
+    window.opener.document.getElementById("hayade").value = ''
+    window.opener.document.getElementById("hayadeproject").value = ''
+    window.opener.document.getElementById("hayadedisplay").innerHTML = ''
+    
+    window.opener.document.getElementById("soutai").value = ''
+    window.opener.document.getElementById("soutaiproject").value = ''
+    window.opener.document.getElementById("soutaidisplay").innerHTML = ''
+
+
+    window.opener.document.getElementById("hensoku").value = ''
+    window.opener.document.getElementById("hensokuproject").value = ''
+    window.opener.document.getElementById("hensokudisplay").innerHTML = ''
+
+    window.opener.document.getElementById("midnight").value = ''
+    window.opener.document.getElementById("midnightproject").value = ''
+    window.opener.document.getElementById("midnightdisplay").innerHTML = ''
+    
+    
+    window.opener.document.getElementById("holiday").value = ''
+    window.opener.document.getElementById("holidayproject").value = ''
+    window.opener.document.getElementById("holidaydisplay").innerHTML = ''
+    
+    window.opener.document.getElementById("holidaykbn").value = ''
+    window.opener.document.getElementById("holidaykbnproject").value = ''
+    window.opener.document.getElementById("riyu").value = ''
+    window.opener.document.getElementById("riyuproject").value = ''
+
+    
+    var errorflg = false
+    
+    
+    if (document.getElementById("holidaykbn").value == "" || document.getElementById("riyu").value == "") {
+        
+            if(document.getElementById("holidaykbn").value == "") {
+                document.getElementById("errorh").innerHTML  = "休暇区分を選択してください";
+             
+            }
+            if(document.getElementById("riyu").value == "") {
+                document.getElementById("errorriyu").innerHTML  = "取得事由を選択してください";
+            }
+            errorflg = true
+    }
+    if(document.getElementById("Absentkbn").value == "") {
+        document.getElementById("errorkubun").innerHTML  = "出欠区分を選択してください";
+        errorflg = true
+    }
+    
+    
+    
+    if(document.getElementById("Todokede3").checked) {
+    
+            if (document.getElementById("Todokede0").checked) {
+                document.getElementById("errorhensoku1").innerHTML  = "変則勤務チェック時は届出種類の遅刻は選択できません。";
+                errorflg = true
+            }
+            if (document.getElementById("Todokede2").checked) {
+                document.getElementById("errorhensoku2").innerHTML  = "変則勤務チェック時は届出種類の早退は選択できません。";
+                errorflg = true
+            }
+            if (document.getElementById("Todokede5").checked) {
+                document.getElementById("errorhensoku3").innerHTML  = "変則勤務チェック時は届出種類の休日出勤は選択できません。";
+                errorflg = true
+            }
+    }
+    
+    if(document.getElementById("Todokede5").checked) {
+    
+            if (document.getElementById("Todokede0").checked) {
+                document.getElementById("errorholi1").innerHTML  = "休日出勤チェック時は届出種類の遅刻は選択できません。";
+                errorflg = true
+            }
+            if (document.getElementById("Todokede2").checked) {
+                document.getElementById("errorholi2").innerHTML  = "休日出勤チェック時は届出種類の早退は選択できません。";
+                errorflg = true
+            }
+    }
+    
+    if (errorflg == true) {
+        return
+    }
+    
+    //親画面に値を挿入
+    if(document.getElementById("Absentkbn").value == 0) {
+        window.opener.document.getElementById("abs").value = '出勤'
+        window.opener.document.getElementById("absproject").value = '出勤'
+        window.opener.document.getElementById("absdisplay").innerHTML = '出勤'
+    }
+    
+    if (document.getElementById("Absentkbn").value == 1) {
+        window.opener.document.getElementById("abs").value = '欠勤'
+        window.opener.document.getElementById("absproject").value = '欠勤'
+        window.opener.document.getElementById("absdisplay").innerHTML = '欠勤'
+    }
+    
+    window.opener.document.getElementById("holidaykbn").value = document.getElementById("holidaykbn").value
+    window.opener.document.getElementById("holidaykbnproject").value = document.getElementById("holidaykbn").value
+    window.opener.document.getElementById("holidaykbndisplay").innerHTML = document.getElementById("holidaykbn").value
+    window.opener.document.getElementById("riyu").value = document.getElementById("riyu").value
+    window.opener.document.getElementById("riyuproject").value = document.getElementById("riyu").value
+    window.opener.document.getElementById("riyudisplay").innerHTML = document.getElementById("riyu").value
+    
+    if(document.getElementById("Todokede0").checked) {
+        window.opener.document.getElementById("chikoku").value = document.getElementById("Todokede0").value
+        window.opener.document.getElementById("chikokuproject").value = document.getElementById("Todokede0").value
+        window.opener.document.getElementById("chikokudisplay").innerHTML = document.getElementById("Todokede0").value
+    }
+    if(document.getElementById("Todokede1").checked) {
+        window.opener.document.getElementById("hayade").value = document.getElementById("Todokede1").value
+        window.opener.document.getElementById("hayadeproject").value = document.getElementById("Todokede1").value
+        window.opener.document.getElementById("hayadedisplay").innerHTML = document.getElementById("Todokede1").value
+    }
+    if(document.getElementById("Todokede2").checked) {
+        window.opener.document.getElementById("soutai").value = document.getElementById("Todokede2").value
+        window.opener.document.getElementById("soutaiproject").value = document.getElementById("Todokede2").value
+        window.opener.document.getElementById("soutaidisplay").innerHTML = document.getElementById("Todokede2").value
+
+    }
+    if(document.getElementById("Todokede3").checked) {
+        window.opener.document.getElementById("hensoku").value = document.getElementById("Todokede3").value
+        window.opener.document.getElementById("hensokuproject").value = document.getElementById("Todokede3").value
+        window.opener.document.getElementById("hensokudisplay").innerHTML = document.getElementById("Todokede3").value
+  
+    }
+    if(document.getElementById("Todokede4").checked) {
+        window.opener.document.getElementById("midnight").value = document.getElementById("Todokede4").value
+        window.opener.document.getElementById("midnightproject").value = document.getElementById("Todokede4").value
+        window.opener.document.getElementById("midnightdisplay").innerHTML = document.getElementById("Todokede4").value
+
+    }
+    if(document.getElementById("Todokede5").checked) {
+        window.opener.document.getElementById("holiday").value = document.getElementById("Todokede5").value
+        window.opener.document.getElementById("holidayproject").value = document.getElementById("Todokede5").value
+        window.opener.document.getElementById("holidaydisplay").innerHTML = document.getElementById("Todokede5").value
+
+    }
+    
+    window.opener.document.getElementById('kintaitouroku').submit();
+    window.close();
+}
+</script>
+                            </td>
+          </tr>
+          <tr>
+            <th class="lbl_title4" style="width:65px;height: 60px;"id="Todokede" name="Todokede" rowspan="2">届出種類</th>
+            
+            <td><input type="hidden"  name="Todokede0" value="">
+            <input id="Todokede0" type="checkbox" name="Todokede0" form="kintaiabs" value="遅刻"/>
+            <label for="ctl00_contents_chkSinseiKbn_0">遅刻</label></td>
+            <td><input type="hidden"" name="Todokede1" value="">
+            <input id="Todokede1" type="checkbox" name="Todokede1" form="kintaiabs" value="早出有"  />
+            <label for="ctl00_contents_chkSinseiKbn_0">早出有</label></td>
+       
+        <td><input type="hidden" name="Todokede2" value="">
+        <input id="Todokede2" type="checkbox" name="Todokede2" form="kintaiabs"  value="早退" />
+        <label for="ctl00_contents_chkSinseiKbn_1">早退</label></td>
+        </tr><tr>
+            <td>
+                <input type="hidden"  name="Todokede3" value="">
+                <input id="Todokede3" type="checkbox" name="Todokede3" form="kintaiabs"  value="変則勤務" />
+                <label for="ctl00_contents_chkSinseiKbn_4">変則勤務</label></td>
+        <td><input type="hidden"  name="Todokede4" value="">
+        <input id="Todokede4" type="checkbox" name="Todokede4" form="kintaiabs" value="深夜有"  />
+        <label for="ctl00_contents_chkSinseiKbn_2">深夜有</label></td><td>
+        <input type="hidden" name="Todokede5" value="">
+        <input id="Todokede5" type="checkbox" name="Todokede5" form="kintaiabs" value="休日出勤"  />
+        <label for="ctl00_contents_chkSinseiKbn_5">休日出勤</label></td>
+          </tr>
+
+        </tbody>
+        
+      </table>
+      <br>
+      <table width="100%">
+
+        <tr>
+            <td align="center">
+
+                <input type="button" name="btnExec" value="OK" onClick='clickFire()' id="btnExec" class="btn_normal2" style="width:400px ;"/>
+                    <form action="{% url  'kintaiabs' %}" method="post" id="kintaiabs" name= "kintaiabs">
+                    {% csrf_token %}
+                </form>
+            </td>
+        </tr>
+        
+    </table>
+    <div id="errorh" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorriyu" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorkubun" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorhensoku1" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorhensoku2" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorhensoku3" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorholi1" class="lbl_error" align="center" style="color:red"></div>
+    <div id="errorholi2" class="lbl_error" align="center" style="color:red"></div>
+    </body>
+</html>

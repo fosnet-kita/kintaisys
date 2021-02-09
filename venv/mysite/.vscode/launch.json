@@ -1,0 +1,16 @@
+{
+    "version": "3.9.0",
+    "configurations": [
+        {
+            "name": "Python: Django",
+            "type": "python",
+            "request": "launch",
+            "program": "C:\\Django_2\\venv\\mysite\\manage.py",
+            "console": "integratedTerminal",
+            "args": [
+                "runserver",
+            ],
+            "django": true
+        }
+    ]
+}

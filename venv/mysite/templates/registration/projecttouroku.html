@@ -1,0 +1,108 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" /><title>
+プロジェクト登録</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+    <div id="Search">
+		<table class="tbl_list" cellspacing="0" rules="all" border="1" id="grdMyProject" style="border-collapse:collapse; width: 90%;">
+			<tr>
+				<th  scope="col">プロジェクト登録</th>
+			</tr><tr>
+			     <form action="{% url  'kintaiproject' %}" name="project" id="project" method="post">
+                 {% csrf_token %}
+				<td class="txt_code_indent" align="center" valign="middle" style="width:360px;white-space:nowrap;">
+                     <select name="touroku1"id="touroku1" 
+                    class="ddl_normal" style="width: 100%;" form="project">
+                    <option selected="selected" value=""></option>
+                    {% for pr in pro %}
+                        {% if  projectselect1 ==   pr.projectname %}
+                        <option value="{{ pr.projectname }}" selected="selected">{{ pr.projectname }}</option>
+                        {% else %}
+                    	<option  value="{{ pr.projectname }}" >
+            			{{ pr.projectname }}
+            			</option>
+            			{% endif %}
+                    {% endfor %}
+                    </select>
+                                            </td>
+			</tr><tr>
+                <td class="txt_code_indent" align="center" valign="middle" style="width: 100%;white-space:nowrap;">
+                     <select name = "touroku2" id="touroku2"
+                    class="ddl_normal" style="width: 100%;">
+                    <option selected="selected" value=""></option>
+                    {% for pr in pro %}
+                        {% if  projectselect2 ==   pr.projectname %}
+                        <option value="{{ pr.projectname }}" selected="selected">{{ pr.projectname }}</option>
+                        {% else %}
+                    	<option  value="{{ pr.projectname }}" >
+            			{{ pr.projectname }}
+            			</option>
+            			{% endif %}
+                    {% endfor %}
+                    </select>
+                                            </td>
+			</tr>
+			<tr>
+            <td class="txt_code_indent" align="center" valign="middle" style="width:360px;white-space:nowrap;">
+                    <select name="touroku3" id="touroku3"
+                    class="ddl_normal" style="width: 100%;">
+                    <option selected="selected" value=""></option>
+                    {% for pr in pro %}
+                        {% if  projectselect3 ==   pr.projectname %}
+                        <option value="{{ pr.projectname }}" selected="selected">{{ pr.projectname }}</option>
+                        {% else %}
+                    	<option  value="{{ pr.projectname }}" >
+            			{{ pr.projectname }}
+            			</option>
+            			{% endif %}
+                    {% endfor %} 
+                    </select>
+              </td>
+              </tr>
+              <tr>
+            <td class="txt_code_indent" align="center" valign="middle" style="width:360px;white-space:nowrap;">
+                    <select name="touroku4" id="touroku4"
+                    class="ddl_normal" style="width: 100%;" >
+                    <option selected="selected" value=""></option>
+                    {% for pr in pro %}
+                        {% if  projectselect4 ==   pr.projectname %}
+                        <option value="{{ pr.projectname }}" selected="selected">{{ pr.projectname }}</option>
+                        {% else %}
+                    	<option  value="{{ pr.projectname }}" >
+            			{{ pr.projectname }}
+            			</option>
+            			{% endif %}
+                    {% endfor %} 
+                    </select>
+              </td>
+              </tr>
+              <tr>
+              <td class="txt_code_indent" align="center" valign="middle" style="width:360px;white-space:nowrap;">
+               <input type="button" style="width:100%;" valign="middle" value="登録" onClick='clickFire()' name= "project" id="project"  class="btn_normal" />
+			</td>
+			</tr>  
+              </table>
+               </form>
+</div>
+                        </td>
+                    </tr>
+                </table>
+<script>
+function clickFire(){
+console.log(document.getElementById("touroku1").value)
+console.log(document.getElementById("touroku2").value)
+console.log(document.getElementById("touroku3").value)
+console.log(document.getElementById("touroku4").value)
+window.opener.document.getElementById("project1").value = document.getElementById("touroku1").value
+window.opener.document.getElementById("project2").value = document.getElementById("touroku2").value
+window.opener.document.getElementById("project3").value = document.getElementById("touroku3").value
+window.opener.document.getElementById("project4").value = document.getElementById("touroku4").value
+window.opener.document.getElementById("tourokuope").value = 'true'
+window.opener.document.getElementById('kintaitouroku').submit();
+window.close();
+}
+</script>
+            </div>
+    </body>
+</html>

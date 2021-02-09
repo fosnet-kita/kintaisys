@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="Shift-JIS">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ログイン</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="header.css" type="text/css" rel="stylesheet" /><link href="contents.css" type="text/css" rel="stylesheet" /><link href="common.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+
+<table id="InputSmall">
+                    <tr>
+                        <td>
+                            <table class="tbl_title" width="100%">
+                            
+                                
+                                <tr>
+	                                <td class="lbl_title">
+                                        <span id="lblUserId">ユーザーID:</span>
+                                    </td>
+                                    <td class="lbl_indent">
+                                        <input name="txtUserId" type="text" id="txtUserId" tabindex="1" class="txt_code" style="width:100%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+	                                <td class="lbl_title">
+                                        <span id="lblPassword">パスワード:</span>
+                                    </td>
+                                    <td class="lbl_indent">
+                                    <input name="txtPassword" type="password" id="txtPassword" tabindex="2" class="txt_code" style="width:100%;" />
+                                    </td>
+                                </tr>
+
+                            </table>
+                            <table width="100%" >
+                                <tr>
+                                    <td>
+                                        <span id="lblErrMsg" class="lbl_error"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        
+                                       # <input type="submit" name="btnLogin" value="ログイン" id="btnLogin" class="btn_normal" style="width: 100%;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                <td align="center" > 
+                                        
+                                        <input type="button" name="btnChange" value="パスワード変更" onclick="javascript:__doPostBack(&#39;btnChange&#39;,&#39;&#39;)" id="btnChange" class="btn_normal2" align="center" style="width: 100%;"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,67 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+
+{% block customcss %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/accounts/style.css' %}">
+{% endblock customcss %}
+
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+<html>
+  <body>
+
+    <h1>ログイン画面</h1>
+   <form action="{% url  'login' %}" method="POST" id="kintai" name="kintai">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <tr>
+	                          <table class="tbl_title" width="100%">
+
+                                <tr>
+	                                <td class="lbl_title">
+	                                    
+                                        <span id="lblUserId">ユーザーID:</span>
+                                        <input name="User" type="text" id="txtUserId" tabindex="1" class="txt_code" style="width:150px;" />
+                                    </td>
+                                </tr>
+                                <tr>
+	                                <td class="lbl_title">
+                                        <span id="lblPassword">パスワード:</span>
+                                        <input name="Pass" type="password" id="txtPassword" tabindex="2" class="txt_code" style="width:150px;" />&nbsp;
+                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span id="lblErrMsg" class="lbl_error">{{ error }}</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left">
+
+                                        <button type="submit" class="btn btn-primary btn-lg">ログイン</button>
+                                    </form>
+                                    </td>
+                                </tr>
+                               
+                               <tr>
+                                    <td align="left" >
+                                       
+                                        <form method="POST"  action="{% url  'password' %}" name="password">
+                                        {% csrf_token %}
+                                          <button type="submit" class="btn btn-primary btn-lg">パスワード変更</button>
+                                        </form>
+                                    </td>
+                                    
+                                </tr>
+                             </table>
+                                    
+                                </tr>
+  </body>
+</html>
+{% endblock content %}

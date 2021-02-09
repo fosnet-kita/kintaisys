@@ -1,0 +1,549 @@
+{% load static %}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" />
+    <title>勤怠入力画面</title>
+    <meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Language"    content="ja" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript; charset=UTF-8" />
+    <meta http-equiv="Content-Style-Type"  content="text/css" />
+</head>
+入力日   社員CD:{{ user }}<br>
+<div id="ctl00_contents_Panel2" 
+style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">
+                <table id="Table22" class="tbl_input"  border="1">
+                    <tr>
+                        <form action="{% url  'kintaiload' %}" method="post" id="load">
+                        {% csrf_token %}
+                        <input type="date" name = "dateselect" id="caldate"  onchange="this.form.submit();" value ="{{ ymd }}"  />
+                        </form>
+            <span id="week" name="week" form="kintaitouroku"></span>
+			            <th class="lbl_title4" style="width:78px">始業時刻</th>
+			            <th class="lbl_title4" style="width:78px">終業時刻</th>
+                        <th class="lbl_title4" style="width:98px">残業時間(h)</th>
+                        <td class="lbl_title4" style="width:238px" rowspan="3">
+                           <input type="button" name="ctl00$contents$imgKanriNo" value="出欠選択" onClick='popup_modeless("/accounts/appearrance/")' style="width:78px" />
+                               <div id="absdisplay" style="display: inline-block; _display: inline;">{{ abs }}</div>
+                             <div id="holidaykbndisplay" style="display: inline-block; _display: inline;">{{ holidaykbn }}</div>
+                             <div id="riyudisplay" >{{ riyu }}</div>
+                             <div id="chikokudisplay" style="display: inline-block; _display: inline;">{{ chikoku }}</div>
+                              <div id="hayadedisplay" style="display: inline-block; _display: inline;">{{ hayade }}</div>
+                              
+                              <div id="soutaidisplay" style="display: inline-block; _display: inline;">{{ soutai }}</div>
+                             <div id="hensokudisplay" style="display: inline-block; _display: inline;">{{ hensoku }}</div>
+                           <div id="midnightdisplay" style="display: inline-block; _display: inline;"> {{ midnight }}</div>
+                             <div id="holidaydisplay" style="display: inline-block; _display: inline;">{{ holiday }}</div>
+                           </td> 
+                           <form action="{% url  'appearrance' %}" method="post" id="load">
+                        {% csrf_token %}              
+                        </form>
+                    </tr>
+                <div id="doubleerror" style="color:red"></div>
+                <div id="timeerror" style="color:red"></div>
+                <div id="sameerror" style="color:red"></div>
+                <div id="touroku" style="color:red">{{ message }}</div>
+                <div id="absnerror" style="color:red">{{ absnerror }}</div>
+                <div id="projecterror" style="color:red">{{ projecterror }}</div>
+                <div id="starterror" style="color:red">{{ starterror }}</div>
+                <div id="enderror" style="color:red">{{ enderror }}</div>
+                <div id="resterror" style="color:red">{{ resterror }}</div>
+                <div id="kouteierror" style="color:red">{{ kouteierror }}</div>
+                <div id="workerror" style="color:red">{{ workerror }}</div>
+                <div id="miderror" style="color:red">{{ miderror }}</div>
+                        <tr>
+                            <td class="center" valign="middle" style="background-color:White;width:60px; height:20px;text-align: center;">
+                                <input name="starttime" id="starttimeaa" type="text" maxlength="8" value="{{ starttime }}" class="txt_code"  style="width:80px;" form="kintaitouroku" readonly />
+                            
+                                                </td><td class="center" valign="middle" style="width:80px; text-align: center;">
+                                                    <input name="endtime" id="endtimeaa" type="text" maxlength="8" value="{{ endtime }}" class="txt_code"  style="width:80px;" form="kintaitouroku" readonly />
+                                                </td><td class="center" valign="middle" style="width:80px; text-align: center;">
+                                                    <input name="overtime" id="overtimeaaa" type="text" maxlength="8" value="{{ overtime }}" class="txt_code"  style="width:80px;" form="kintaitouroku"  readonly/>
+                                                    
+                                                </td>
+                                                
+                        </tr>
+                </table>
+            </div>
+                <br>
+<SCRIPT language="JavaScript">
+function popup_modeless(url){
+    
+	var newWin = window.open(
+		url,    //移動先
+		"pop",  //ターゲット名（aタグのtargetと同様）
+		"width=420, height=250"
+	);
+	newWin.focus();
+}
+</SCRIPT>
+                            <td>
+                                <br>
+                                プロジェクト内訳
+                                <br>
+                                <div id="ctl00_contents_Panel2" style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">
+                                    
+                                    <br>
+                                <tr>
+                                 <td class="left" >
+                                 
+                                  <input type="button" name="projecttouroku" value="プロジェクト登録" onClick='popup_modeless("/accounts/project/")' id="ctl00_contents_btnDeleteH" class="btn_normal2" style="width:100%"/>
+                                 <input id="absproject" name="absproject" type="hidden" value="{{ abs }}">
+                                 <input id="chikokuproject" name="chikokuproject" type="hidden" value="{{ chikoku }}">
+                                 <input id="hayadeproject" name="hayadeproject" type="hidden" value="{{ hayade }}">
+                                 <input id="soutaiproject" name="soutaiproject" type="hidden" value="{{ soutai }}">
+                                 <input id="hensokuproject" name="hensokuproject" type="hidden" value="{{ hensoku }}">
+                                 <input id="midnightproject" name="midnightproject" type="hidden" value="{{ midnight }}">
+                                 <input id="holidayproject" name="holidayproject" type="hidden" value="{{ holiday }}">
+                                 <input id="holidaykbnproject" name="holidaykbnproject" type="hidden" value="{{ holidaykbn }}">
+                                 <input id="riyuproject" name="riyuproject" type="hidden" value="{{ riyu }}">
+                                 <form action="{% url  'kintaitouroku' %}" method="POST" id="kintaitouroku" name="kintaitouroku">
+                                 {% csrf_token %}
+                                 <input id="project1" name="project1" type="hidden" value="">
+                                 <input id="project2" name="project2" type="hidden" value="">
+                                 <input id="project3" name="project3" type="hidden" value="">
+                                 <input id="project4" name="project4" type="hidden" value="">
+                                 <input id="tourokuope" name="tourokuope" type="hidden" value="">
+                                 </td>
+                                 <br>
+                                </tr>
+                                <input id="abs" name="abs" type="hidden" value="{{ abs }}">
+                                <input id="chikoku" name="chikoku" type="hidden" value="{{ chikoku }}">
+                                <input id="hayade" name="hayade" type="hidden" value="{{ hayade }}">
+                                <input id="soutai" name="soutai" type="hidden" value="{{ soutai }}">
+                                <input id="hensoku" name="hensoku" type="hidden" value="{{ hensoku }}">
+                                <input id="midnight" name="midnight" type="hidden" value="{{ midnight }}">
+                                <input id="holiday" name="holiday" type="hidden" value="{{ holiday }}">
+                                <input id="holidaykbn" name="holidaykbn" type="hidden" value="{{ holidaykbn }}">
+                                <input id="riyu" name="riyu" type="hidden" value="{{ riyu }}">
+<div id="projectname1"></div>
+{% if  projectname1 %}
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" name="projectname1" form="kintaitouroku" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+   {{ projectname1 }}<input id="projectname1" name="projectname1" type="hidden" value="{{ projectname1 }}">
+</td>
+                                        </tr><tr>
+<script language="javascript" type="text/javascript">
+        function myfunc() {
+            var fm = document.getElementById("kintaitouroku");
+            document.getElementById("output_message").innerHTML = input_message;
+ 
+        }
+    </script>
+    <div id="output_message"></div>
+                                        
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                     
+                                                                                                 <select name="kouteiname1"id="kouteiname1" onchange="this.form.submit()" 
+                                                                                                class="ddl_normal" style="width: 90%;" >
+                                                                                                <option></option>
+                                                                                            {% for pr in koutei1 %}
+                                                                                                {% if  kouteiselect1 ==   pr.kouteiname %}
+                                                                                                <option value="{{ pr.kouteiname }}" selected="selected">{{ pr.kouteiname }}</option>
+                                                                                                {% else %}
+                                                                                                <option value="{{ pr.kouteiname }}">{{ pr.kouteiname }}</option>
+                                                                                                {% endif %}
+                                                                                            {% endfor %}
+                                                                                                </select>
+                                                                                        <div id="output_message"></div>
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                          
+                                                                                                <select name="workname1"   id="workname1" class="ddl_normal" style="width:100%;" >
+                                                                                                <option ></option>
+                                                                                                {% for pr in gyomu1 %}
+                                                                                                {% if  gyomuselect1 ==   pr.workname %}
+                                                                                                <option value="{{ pr.workname }}" selected="selected">{{ pr.workname }}</option>
+                                                                                                {% else %}
+                                                                                                <option  value="{{ pr.workname }}" id="{{ pr.workname }}">{{ pr.workname }}</option>
+                                                                                                {% endif %}
+                                                                                                {% endfor %}
+                                                                                            </select>
+                                                                                            </td><br /></td>
+                                        </tr><tr>
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                        <input name="starttime1" type="time" id="starttime1" value="{{ starttime1 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"form="kintaitouroku"/>
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle"   style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <input name="endtime1" type="time" id="endtime1" value="{{ endtime1 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)" form="kintaitouroku"/>
+                                                                                        </td>
+                                                                                        <th scope="col">休憩(h)</th><td class="center" valign="middle"  style="background-color:White;width:60px;text-align: center;" />
+                                                                                            <input name="resttime1" type="number" step="0.01" id="resttime1" value="{{ resttime1 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)" form="kintaitouroku" /> 
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                    </table>
+{% else %}
+{% endif %}
+<script>
+function start(value){
+     var start = [];
+     var end = [];
+     var flg = 0;
+     var rest = 0.0;
+     var resttotal = 0.0;
+     document.getElementById('timeerror').textContent = "";
+     document.getElementById('sameerror').textContent = "";
+     document.getElementById('doubleerror').textContent = "";
+     document.getElementById('touroku').innerHTML = "";
+     document.getElementById('absnerror').innerHTML = "";
+     document.getElementById('projecterror').innerHTML = "";
+     document.getElementById('starterror').innerHTML = "";
+     document.getElementById('enderror').innerHTML = "";
+     document.getElementById('kouteierror').innerHTML = "";
+     document.getElementById('workerror').innerHTML = "";
+     var errorflg = false;
+     
+     // Enterキーが押された時にSubmitされるのを抑制する
+    if (document.getElementById("resttime1") != null) {
+        document.getElementById("resttime1").onkeypress = (e) => {
+        // form1に入力されたキーを取得
+        const key = e.keyCode || e.charCode || 0;
+        // 13はEnterキーのキーコード
+            if (key == 13) {
+              // アクションを行わない
+              e.preventDefault();
+            }
+        }
+    }
+    
+    // Enterキーが押された時にSubmitされるのを抑制する
+    if (document.getElementById("resttime2") != null) {
+        document.getElementById("resttime2").onkeypress = (e) => {
+        // form1に入力されたキーを取得
+        const key = e.keyCode || e.charCode || 0;
+        // 13はEnterキーのキーコード
+            if (key == 13) {
+              // アクションを行わない
+              e.preventDefault();
+            }
+        }
+    }
+    
+    // Enterキーが押された時にSubmitされるのを抑制する
+    if (document.getElementById("resttime3") != null) {
+        document.getElementById("resttime3").onkeypress = (e) => {
+        // form1に入力されたキーを取得
+        const key = e.keyCode || e.charCode || 0;
+        // 13はEnterキーのキーコード
+            if (key == 13) {
+              // アクションを行わない
+              e.preventDefault();
+            }
+        }
+    }
+    
+    // Enterキーが押された時にSubmitされるのを抑制する
+    if (document.getElementById("resttime4") != null) {
+        document.getElementById("resttime4").onkeypress = (e) => {
+        // form1に入力されたキーを取得
+        const key = e.keyCode || e.charCode || 0;
+        // 13はEnterキーのキーコード
+            if (key == 13) {
+              // アクションを行わない
+              e.preventDefault();
+            }
+        }
+    }
+
+     for (var i = 0; i < 4; i++) {
+        var i1 = i + 1;
+        if(document.getElementById('starttime'+ i1) == null || document.getElementById('endtime'+ i1) == null) {
+            console.log(i);
+            start.push(2400);
+            end.push(0);
+            continue;
+        }
+        start.push(document.getElementById('starttime'+ i1).value);
+        end.push(document.getElementById('endtime' + i1).value);
+        console.log(i);
+
+        if((start[i] != 0 && end[i] != 0) && ( start[i] != "" && end[i] != "")) { 
+            flg = 1;
+            console.log(start[i]);
+            console.log(end[i]);
+            start[i] = Number( start[i].replace(':', ''));
+            end[i] = Number(end[i].replace(':', ''));
+            if(start[i] >= end[i]) {
+                end[i] = end[i] + 2400;
+            }
+            if(i > 0 && start[i] != end[i - 1]) {
+                document.getElementById('sameerror').textContent = "作業報告の開始時刻と前行の終了時刻は同じ値になるように入力してください";
+                errorflg = true;
+            }
+            
+            for (var j = 0; j <  start.length; j++) {
+                   console.log(start.length);
+                if (i == j) {
+                    continue;
+                }
+                if ((start[i] < end[j] && start[i] > start[j] ) ||( end[i] < end[j] && end[i] > start[j])) {
+                  document.getElementById('doubleerror').textContent = "プロジェクト間で時間が重複しています";
+                  errorflg = true;
+                }
+           }
+           if(errorflg == true){
+                return;
+           }
+
+        resttotal =  Number(resttotal) + Number(document.getElementById("resttime" + i1).value);
+        }
+     }
+     console.log(start);
+     calc(Math.min.apply(null, start),Math.max.apply(null, end),resttotal);
+}
+
+function calc(start,end,resttotal){
+     var startstr = start.toString().padStart(4, '0');
+     var endstr = end.toString().padStart(4, '0');
+     console.log(startstr);
+     console.log(endstr); 
+     document.getElementById("starttimeaa").value = startstr.slice(0, 2) + ":" + startstr.slice(2, 4);
+     
+     var endhour = parseInt(endstr.slice(0, 2));
+     if (end >= 2400) {
+        end = end - 2400;
+        var endmidstr = end.toString().padStart(4, '0');
+        document.getElementById("endtimeaa").value = endmidstr.slice(0, 2) + ":" + endstr.slice(2, 4);
+     } else {
+        document.getElementById("endtimeaa").value = endstr.slice(0, 2) + ":" + endstr.slice(2, 4);
+     }
+     var endmin = parseInt(endstr.slice(2, 4));
+     var endint = parseInt(endstr);
+     var starthour = parseInt(startstr.slice(0, 2));
+     var startmin = parseInt(startstr.slice(2, 4));
+     var min = endmin - startmin;
+     min =min / 60;
+     var worktime = endhour - starthour + min - resttotal;
+     worktime = (Math.round(worktime * 100)) / 100
+     console.log(worktime);
+     var over = worktime - 7.5;
+     over = (Math.round(over * 100)) / 100
+     console.log(over);
+     if(over < 0) {
+        document.getElementById("overtimeaaa").value =  0;
+     } else {
+        document.getElementById("overtimeaaa").value =  over.toFixed(2);
+     }
+     
+}
+</script>
+{% if projectname2 %}
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+    <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiProject">{{ projectname2 }}<input id="projectname2" name="projectname2" type="hidden" value="{{ projectname2 }}"></span>
+</td>
+
+                                        </tr><tr>
+                                        
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                           
+                                                                                            <select name="kouteiname2" onchange="submit(this.form)" id="kouteiname2"  class="ddl_normal" style="width:95%;">
+                                                                                            <option></option>
+                                                                                            {% for pr in koutei2 %}
+                                                                                                {% if  kouteiselect2 ==   pr.kouteiname %}
+                                                                                                <option value="{{ pr.kouteiname }}" selected="selected">{{ pr.kouteiname }}</option>
+                                                                                                {% else %}
+                                                                                                <option value="{{ pr.kouteiname }}">{{ pr.kouteiname }}</option>
+                                                                                                {% endif %}
+                                                                                            {% endfor %}
+                                                                                            </select>
+
+                                                                                        <div id="output_message"></div>
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                            
+                                                                                                <select name="workname2" id="workname2" class="ddl_normal" style="width:100%;">
+                                                                                                <option ></option>
+                                                                                                {% for pr in gyomu2 %}
+                                                                                                {% if  gyomuselect2 ==   pr.workname %}
+                                                                                                <option value="{{ pr.workname }}" selected="selected">{{ pr.workname }}</option>
+                                                                                                {% else %}
+                                                                                                <option  value="{{ pr.workname }}" id="{{ pr.workname }}">{{ pr.workname }}</option>
+                                                                                                {% endif %}
+                                                                                                {% endfor %}
+                                                                                            </select>
+                                                                                            
+                                                                                            </td><br /></td>
+                                                                                        
+                                        </tr><tr>
+                                            
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                        <input name="starttime2" type="time" id="starttime2" tabindex="2" value="{{ starttime2 }}" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <input name="endtime2" type="time" id="endtime2" tabindex="2"value="{{ endtime2 }}" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <input name="resttime2" type="number" step="0.01" id="resttime2" value="{{ resttime2 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/> 
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                        
+                                    </table>
+{% endif %}
+{% if projectname3 %}
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+    <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiProject">{{ projectname3 }}<input id="projectname3" name="projectname3" type="hidden" value="{{ projectname3 }}"></span>
+</td>
+
+                                        </tr><tr>
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                           
+                                                                                            <select name="kouteiname3" onchange="submit(this.form)" id="kouteiname3"  class="ddl_normal" style="width:95%;">
+                                                                                           <option></option>
+                                                                                            {% for pr in koutei3 %}
+                                                                                                {% if  kouteiselect3 ==   pr.kouteiname %}
+                                                                                                <option value="{{ pr.kouteiname }}" selected="selected">{{ pr.kouteiname }}</option>
+                                                                                                {% else %}
+                                                                                                <option value="{{ pr.kouteiname }}">{{ pr.kouteiname }}</option>
+                                                                                                {% endif %}
+                                                                                            {% endfor %}
+                                                                                            </select>
+                                                                                        <div id="output_message"></div>
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                            
+                                                                                                <select name="workname3" id="workname3" class="ddl_normal" style="width:100%;">
+                                                                                                <option ></option>
+                                                                                                {% for pr in gyomu3 %}
+                                                                                                {% if  gyomuselect3 ==   pr.workname %}
+                                                                                                <option value="{{ pr.workname }}" selected="selected">{{ pr.workname }}</option>
+                                                                                                {% else %}
+                                                                                                <option  value="{{ pr.workname }}" id="{{ pr.workname }}">{{ pr.workname }}</option>
+                                                                                                {% endif %}
+                                                                                                {% endfor %}
+                                                                                            </select>
+                                                                                            
+                                                                                            </td><br /></td>
+                                                                                     
+                                        </tr><tr>
+                                            
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                        <input name="starttime3" type="time" id="starttime3" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <input name="endtime3" type="time" id="endtime3" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <input name="resttime3" type="number" step="0.01" id="resttime3" value="{{ resttime3 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/> 
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                        
+                                    </table>
+{% endif %}
+{% if projectname4 %}
+                                    <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
+                                        
+                                        <tr>
+<th scope="col">プロジェクト</th><td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:200px;white-space:nowrap;" colspan="6">
+    <span id="ctl00_contents_grdMeisai_ctl02_lblMeisaiProject">{{ projectname4 }}<input id="projectname4" name="projectname4" type="hidden" value="{{ projectname4 }}"></span>
+</td>
+
+                                        </tr><tr>
+                                            <th scope="col">工程</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;" colspan="3">
+                                                                                        
+                                                                                            <select name="kouteiname4" onchange="submit(this.form)" id="kouteiname4"  class="ddl_normal" style="width:95%;">
+                                                                                            <option></option>
+                                                                                            {% for pr in koutei4 %}
+                                                                                                {% if  kouteiselect4 ==   pr.kouteiname %}
+                                                                                                <option value="{{ pr.kouteiname }}" selected="selected">{{ pr.kouteiname }}</option>
+                                                                                                {% else %}
+                                                                                                <option value="{{ pr.kouteiname }}">{{ pr.kouteiname }}</option>
+                                                                                                {% endif %}
+                                                                                            {% endfor %}
+                                                                                            </select>
+                                                                                        <div id="output_message"></div>
+
+                                                                                       
+                                                                                        <th scope="col" style="width:50px">業務</th>
+                                                                                            <td colspan="2">
+                                                                                            
+                                                                                                <select name="ctl00$contents$ddlGyoumu" id="ctl00_contents_ddlGyoumu" class="ddl_normal" style="width:100%;">
+                                                                                                <option ></option>
+                                                                                                {% for pr in gyomu4 %}
+                                                                                                {% if  gyomuselect4 ==   pr.workname %}
+                                                                                                <option value="{{ pr.workname }}" selected="selected">{{ pr.workname }}</option>
+                                                                                                {% else %}
+                                                                                                <option  value="{{ pr.workname }}" id="{{ pr.workname }}">{{ pr.workname }}</option>
+                                                                                                {% endif %}
+                                                                                                {% endfor %}
+                                                                                            </select>
+                                                                                            
+                                                                                            </td><br /></td>
+                                        </tr><tr>
+                                            <th scope="col">開始時間</th>
+                                            <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
+                                                <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                        <input name="starttime4" type="time" id="starttime4" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
+                                                                                            <input name="endtime4" type="time" id="endtime4" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
+                                                                                            <input name="resttime4" type="number" step="0.01" id="resttime4" value="{{ resttime4 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/>
+                                                                                        </td>
+                                                                                        <td class="center" valign="middle" style="background-color:gray;width:60px;">
+                                                                                            <br />
+                                                                                        </td>
+                                        </tr>
+                                    </table>
+{% endif %}
+<br> 
+
+                                <table id="Table5" width="500px" class="tbl_title">
+					                <tr>
+					              
+                                        <input type="submit" name="btnExecH" value="勤怠登録" id="kintaitouroku" class="btn_normal2" "  style="width:100%" />
+                                      </form>
+                                    <br>
+                                    <br>
+                                    </tr>
+
+                                    <tr>
+                                   
+                                    <form action="{% url  'output' %}" method="post">
+                                     {% csrf_token %}
+                                     
+                                      
+                                            <input type="submit" name="ctl00$contents$btnDeleteH" value="一覧出力" id="ctl00_contents_btnDeleteH" class="btn_normal2" style="width:100%"/>
+                                           
+                                            
+                                        
+                                    </form>
+                                    </tr>
+                                    
+                                </table>
+                                
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+	        </div>
+		</div>
+    </div>
+            </div>
+{% block extrajs %}
+{% endblock %}
+    </body>
+</html>

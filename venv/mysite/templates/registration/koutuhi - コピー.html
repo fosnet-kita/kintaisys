@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" /><title>
+交通費一覧
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        
+</head>
+    <div>
+
+</div>
+           
+            <div>
+                
+    <div id="ContentsArea">
+        <table id="ContentsHeader" class="tbl_title">
+			
+            <tr>
+                <td colspan="3" class="left">
+                    <span id="ctl00_contents_lblErrMsgH" class="lbl_error"></span>
+                </td>
+            </tr>
+		</table>
+		<div id="Input">
+		    <table>
+		        <tr>
+		            <td id="SyoriKbn">
+                        <table id="ctl00_contents_rdbSyorikbn" border="0">
+	<tr>
+        <td><input id="ctl00_contents_rdbSyorikbn_0" type="radio" name="ctl00$contents$rdbSyorikbn" value="1" checked="checked" /><label for="ctl00_contents_rdbSyorikbn_0">逋ｻ骭ｲ</label></td><td><input id="ctl00_contents_rdbSyorikbn_1" type="radio" name="ctl00$contents$rdbSyorikbn" value="4" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$rdbSyorikbn$1\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="ctl00_contents_rdbSyorikbn_1">繧ｳ繝斐��逋ｻ骭ｲ</label></td><td><input id="ctl00_contents_rdbSyorikbn_2" type="radio" name="ctl00$contents$rdbSyorikbn" value="2" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$rdbSyorikbn$2\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="ctl00_contents_rdbSyorikbn_2">菫ｮ豁｣</label></td><td><input id="ctl00_contents_rdbSyorikbn_3" type="radio" name="ctl00$contents$rdbSyorikbn" value="3" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$rdbSyorikbn$3\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="ctl00_contents_rdbSyorikbn_3">蜑企勁</label></td>
+        <td><input id="ctl00_contents_rdbTourokukbn_1" type="radio" name="ctl00$contents$rdbTourokukbn" value="1" /><label for="ctl00_contents_rdbTourokukbn_1">荳�譎ゆｿ晏ｭ�</label></td>
+        
+ 
+    </tr>
+    
+    
+</table>
+
+                    </td>
+	                <td>
+                        
+</table>
+                    </td>
+                    <table class="tbl_input" width="60%">
+                    <td class="left">
+                        <span id="ctl00_contents_Label2" class="lbl_error"></span>
+                    </td>
+                    
+                    
+                        <td>
+                            <input type="submit" name="ctl00$contents$btnConfF" value="遒ｺ隱" onclick="javascript:return showMessage(&#39;ctl00_contents_txtTransport&#39;);" id="ctl00_contents_btnConfF" class="btn_normal" />
+                            <input type="submit" name="ctl00$contents$btnClearF" value="繧ｯ繝ｪ繧｢" id="ctl00_contents_btnClearF" class="btn_normal" />
+                        </td>
+                    
+                </table>
+			    </tr>
+		    </table><br />
+		    <table class="tbl_input">
+                <tr>
+                    <table class="tbl_input margin_0_30_0_30" width=60%>
+                        <tr>
+                            <form action="/accounts/koutuhilist/" method="post">
+                            {% csrf_token %}
+                            <td class="lbl_indent height24" style="width:330px">
+                                <input type="submit" name="ctl00$contents$imgKanriNo" value="蜈･蜉帶ｸ域ュ蝣ｱ讀懃ｴ｢" id="ctl00$contents$imgKanriNo" style="width:330px;" />
+                            </td> 
+                            </form>
+                            
+                            <th class="lbl_title3">莠､騾夊ｲｻ險
+                                <input name="ctl00$contents$txtTransport" type="text" readonly="readonly" id="ctl00_contents_txtTransport" class="txt_number" style="width:80px;" />
+                            </th>
+
+                            
+                               
+                                          
+                        </tr>  
+                        
+                    </table>
+                    
+                    
+    		<div class="Dummy">
+    		    <a id="Meisai"></a>
+            </div>
+		    <div id="List">
+                交通費精算入力
+			    <table id="Table221" class="tbl_input margin_0_30_0_30" border="1">
+				    <tr>
+					    <th class="center">日付(自)</th>
+					    <th class="center">日付(至)</th>
+					    <th class="center">訪問先／経路</th>
+					    <th class="center">科目</th>
+					    <th class="center">手段</th>
+					    <th class="center">交通費</th>
+					    <th class="center">客先請求</th>
+					    <th class="lbl_renketsu">&nbsp</th>
+				    </tr>
+				    <tr>
+                        <td>
+                            <input name="ctl00$contents$txtInpYmdF" type="text" maxlength="8" id="ctl00_contents_txtInpYmdF" class="txt_code" style="width:80px;" />
+                            
+                        </td>
+                        <td>
+                            <input name="ctl00$contents$txtInpYmdT" type="text" maxlength="8" id="ctl00_contents_txtInpYmdT" class="txt_code" style="width:80px;" />
+                            
+                        </td>
+                        <td>
+                            <input name="ctl00$contents$txtInpHoumonKeiro" type="text" maxlength="100" id="ctl00_contents_txtInpHoumonKeiro" class="txt_code" style="width:300px;" />
+                        </td>
+                        <td>
+                            <select name="ctl00$contents$ddlInpKamoku" id="ctl00_contents_ddlInpKamoku" class="ddl_normal" style="width:100px;">
+	<option selected="selected" value=""></option>
+    <option value="交通費">交通費</option>
+	<option value="定期代">定期代</option>
+
+</select>
+                        </td>
+                        <td>
+			                <select name="ctl00$contents$ddlInpSyudan" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$ddlInpSyudan\&#39;,\&#39;\&#39;)&#39;, 0)" id="ctl00_contents_ddlInpSyudan" class="ddl_normal" style="width:90px;">
+	<option selected="selected" value=""></option>
+	<option value="1001">電車</option>
+	<option value="1002">車</option>
+	<option value="1003">バス</option>
+	<option value="1004">タクシー</option>
+	<option value="1005">飛行機</option>
+	<option value="1006">その他</option>
+
+</select><br />
+                           
+                        </td>
+                        <td>
+                            <input name="ctl00$contents$txtInpTransport" type="text" maxlength="9" id="ctl00_contents_txtInpTransport" class="txt_number" onchange="javascript:CommaEdit(ctl00_contents_txtInpTransport);" style="width:80px;" />
+                        </td>
+                        <td align="center">
+                            <span style="display:inline-block;width:30px;"><input id="ctl00_contents_chkInpKSeikyu" type="checkbox" name="ctl00$contents$chkInpKSeikyu" /></span>
+                        </td>
+                        <td>
+                            <input type="submit" name="ctl00$contents$btnUpdate" value="更新" id="ctl00_contents_btnUpdate" style="width:40px;" /><br />
+                            <input type="submit" name="ctl00$contents$btnAdd" value="追加" id="ctl00_contents_btnAdd" style="width:40px;" /><br />
+                        </td>
+				    </tr>
+			    </table>
+            </div>
+            <br>
+            
+            <table width="100%">
+		        
+            </table>
+            
+			<div>
+                <div id="ctl00_contents_Panel1" style="overflow:auto;">
+	
+                 	<table>
+			            <tr>
+                            <td>
+                                <div>
+
+	</div>
+                            </td>
+                            <td>
+                                
+                                <span id="ctl00_contents_lblBr1" class="invisible"><br/></span>
+                                <span id="ctl00_contents_lblBr2" class="invisible"><br/></span>
+                                
+                            </td>
+                        </tr>
+                    </table>
+                
+</div>
+		    </div>
+		    
+			<table id="Table3" class="margin_0_30_0_30">
+		        <tr>
+				    <td valign="top">
+						<table id="Table31" class="tbl_input">
+				            <tr>
+                                <th class="lbl_title3">蜿門ｼ募</th>
+                                <td class="lbl_indent height24">
+                                    <select name="ctl00$contents$txtCustomCd" type="text" maxlength="7" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$contents$txtCustomCd\&#39;,\&#39;\&#39;)&#39;, 0)" onkeypress="if (WebForm_TextBoxKeyHandler(event) == false) return false;" id="ctl00_contents_txtCustomCd" class="txt_code" style="width:60px;">
+                                        <th class="lbl_title3">邊ｾ邂玲婿豕</th>
+                                        <td class="lbl_indent height24">
+                                            <select name="ctl00$contents$ddlPayKbn" id="ctl00_contents_ddlPayKbn" class="ddl_normal" style="width:100px;">
+            <option value="迴ｾ驥">迴ｾ驥</option>
+            <option selected="selected" value="蜿｣蠎ｧ謖ｯ霎ｼ">蜿｣蠎ｧ謖ｯ霎ｼ</option>
+        
+        </select>
+                                        </td>  
+
+</select>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+		                        <th class="lbl_title3">邊ｾ邂玲婿豕</th>
+                                <td class="lbl_indent height24">
+                                    <select name="ctl00$contents$ddlPayKbn" id="ctl00_contents_ddlPayKbn" class="ddl_normal" style="width:100px;">
+	<option value="迴ｾ驥">迴ｾ驥</option>
+	<option selected="selected" value="蜿｣蠎ｧ謖ｯ霎ｼ">蜿｣蠎ｧ謖ｯ霎ｼ</option>
+
+</select>
+                                </td>
+                            </tr>
+						</table>
+					</td>
+            <table id="Table4" class="tbl_title" width="100%">
+                <tr>
+                    <td class="left">
+                        <span id="ctl00_contents_lblErrMsgF" class="lbl_error"></span>
+                    </td>
+                </tr>
+                
+            </table>
+		</div>
+		<div class="Dummy"></div>
+    </div>
+
+            </div>
+        
+
+
+    </body>
+</html>

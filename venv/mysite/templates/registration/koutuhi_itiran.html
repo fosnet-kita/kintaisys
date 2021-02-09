@@ -1,0 +1,138 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" /><title>
+	交通費一覧
+	</title>
+        <meta name="viewport" content="width=400px, initial-scale=1.0">
+    </head>
+    <body>
+    		<div id="Search">
+                <table class="tbl_list" >
+                    <tr>
+                        <th colspan="7" class="title">入力済交通費一覧</th>
+                    </tr>
+                    <tr>
+                        <td class="lbl_indent">
+                            <div>
+	<table cellspacing="0" rules="all" border="1" id="grdData" style="border-collapse:collapse;" >
+		<tr><th align="center" scope="col">ステータス</th><th align="center" scope="col">精算申請日</th><th align="center" scope="col" style="width:300px;white-space:nowrap;">目的/経路</th><th align="center" scope="col" style="width:100px;white-space:nowrap;">精算金額</th>
+		</tr>
+		</tr>
+        {% for pr in data %}
+        <form action="{% url  'koutuhilist' %}" name="myform" method="post">
+		<tr onClick="display({{ pr.tourokuno}})">
+			<td align="center" valign="middle" style="width:100px;white-space:nowrap;">{{ pr.tourokukbn }}</td>
+			<td class="lbl_indent" align="left" valign="middle" style="width:80px;white-space:nowrap;">{{ pr.tourokudate }}</td>
+			<td class="lbl_indent" align="left" valign="middle" style="width:300px;height: 100px;">{{ pr.homon }}</td>
+			<td class="lbl_indent" align="right" valign="middle" style="width:70px;">{{pr.transport}}</td>
+
+            <input type ="hidden" name="startdate " id="startdatey{{ pr.tourokuno}}" value="{{ pr.startdate.year }}"/>
+            <input type ="hidden" name="startdate " id="startdatem{{ pr.tourokuno}}" value="{{ pr.startdate.month }}"/>
+            <input type ="hidden" name="startdate " id="startdated{{ pr.tourokuno}}" value="{{ pr.startdate.day }}"/>
+            <input type ="hidden" name="enddate" id="enddatey{{ pr.tourokuno}}" value="{{ pr.enddate.year }}"/>
+            <input type ="hidden" name="enddate" id="enddatem{{ pr.tourokuno}}" value="{{ pr.enddate.month }}"/>
+            <input type ="hidden" name="enddate" id="enddated{{ pr.tourokuno}}" value="{{ pr.enddate.day }}"/>
+            
+            <input type ="hidden" name="homon" id="homon{{ pr.tourokuno}}" value="{{ pr.homon }}"/>
+            <input type ="hidden" name="kamoku" id="kamoku{{ pr.tourokuno}}" value="{{ pr.kamoku }}"/>
+            <input type ="hidden" name="syudan" id="syudan{{ pr.tourokuno}}" value="{{ pr.syudan }}"/>
+            <input type ="hidden" name="transport" id="transport{{ pr.tourokuno}}" value="{{ pr.transport }}"/>
+            <input type ="hidden" name="KSeikyu" id="KSeikyu{{ pr.tourokuno}}" value="{{ pr.k_seikyu }}"/>
+            <input type ="hidden" name="{{ pr.tourokuno}}" id="{{ pr.tourokuno}}" value="{{ forloop.counter }}"/>
+		</tr>
+		</form>
+		{% endfor %}
+	</table>
+</div>
+                        </td>
+                    </tr>
+<script>
+idmax = 0;
+function display(touroku) {
+    console.log(touroku);
+    var table = window.opener.document.getElementById("tablesumi");
+    var tablerows= table.rows.length;
+    for (var i = 1; i < tablerows; i++) {
+         table.deleteRow(-1);
+    }
+    
+    var  aaa = 0;
+    
+    var v1y = document.getElementById("startdatey"+ touroku).value;
+    var v1m = document.getElementById("startdatem"+ touroku).value;
+    var v1d = document.getElementById("startdated"+ touroku).value;
+    var v1 = v1y + ("00" + v1m).slice(-2) + ("00" + v1d).slice(-2);
+    
+    var v2y = document.getElementById("enddatey" + touroku).value;
+    var v2m = document.getElementById("enddatem" + touroku).value;
+    var v2d = document.getElementById("enddated" + touroku).value;
+    
+    var v2 = v2y + ("00" + v2m).slice(-2) + ("00" + v2d).slice(-2);
+    var v3 = document.getElementById("homon"+ touroku).value;
+    var v4 = document.getElementById("kamoku"+ touroku).value;
+    var v5 = document.getElementById("syudan"+ touroku).value;
+    var v6 = document.getElementById("transport"+ touroku).value;
+    var v7 = document.getElementById("KSeikyu"+ touroku).value;
+
+    
+    var row = table.insertRow(-1);
+    var cell1 = row.insertCell(-1);
+    var cell2 = row.insertCell(-1);
+    var cell3 = row.insertCell(-1);
+    var cell4 = row.insertCell(-1);
+    var cell5 = row.insertCell(-1);
+    var cell6 = row.insertCell(-1);
+    var cell7 = row.insertCell(-1);
+    var cell8 = row.insertCell(-1);
+    var cell9 = row.insertCell(-1);
+    idmax = idmax + 1;
+    cell1.innerHTML = '<input class="inpval" type="text"   id="startdate' + 1 + '" name="startdatelist" value="' + v1+ '"  style="width:80px;"form="touroku" readonly>'
+    cell2.innerHTML = '<input class="inpval" type="text"   id="enddate' + 1 + '" name="enddatelist" value="' + v2+ '" size="30" style="width:80px;" form="touroku" readonly>';
+    cell3.innerHTML = '<input class="inpval" type="text"   id="homon' + 1 + '" name="homonlist" value="' + v3+ '"  style="width:300px;" form="touroku" readonly>';
+    
+    cell4.innerHTML = '<input class="inpval" type="text"   id="kamoku' + 1 + '" name="kamokulist" value="' + v4 + '"  style="width:80px;" form="touroku" readonly>';
+    
+    cell5.innerHTML = '<input class="inpval" type="text"   id="syudan' + 1 + '" name="syudanlist" value="' + v5 + '"  style="width:80px;" form="touroku" readonly>';
+    cell6.innerHTML = '<input class="inpval" type="text"   id="transport' + idmax + '" name="transportlist" value="' + v6 + '"  style="width:80px;" form="touroku" readonly>';
+    
+    if(v7 == true) {
+       cell7.innerHTML = '<input class="inpval" type="text"   id="KSeikyu' + 1 + '" name="seikyulist" value="有"  style="width:80px;" form="touroku" readonly>';
+    } else {
+       cell7.innerHTML = '<input class="inpval" type="text"   id="KSeikyu' + 1 + '" name="seikyulist" value="無"  style="width:80px;" form="touroku" readonly>';    
+    }
+    cell8.innerHTML = '<input type="button" value="編集" id="coledit" onclick="coledit(this)"><br><input type="button" value="削除" id="coladd" onclick="coldel(this)">';
+    cell9.innerHTML = '<input type="hidden"  id="tourokuno' + touroku + '" name="tourokuno"  value="' + touroku+ '" form="touroku">';
+    var  aaa = 0;
+    
+    console.log(idmax);
+    for (var i = 1; i <= idmax; i++) {
+       console.log(document.getElementById("transport"+ i))
+       if( window.opener.document.getElementById("transport"+ i) != null) {
+          aaa  += eval(  window.opener.document.getElementById("transport"+ i).value);
+          console.log(aaa);
+       }
+       
+    }
+     window.opener.document.getElementById("transporttotal").value = aaa;
+     window.close();
+}
+</script>
+                    <tr>
+                        <td colspan="7" class="left">
+                            <span id="lblErrMsg" class="lbl_error"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" align="center">
+                            <input type="submit" name="btnExit" value="閉じる" onclick="window.close();" id="btnExit"
+                            style="width:300px;" 
+                            class="btn_normal" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+
+
+
+    </body>
+</html>
