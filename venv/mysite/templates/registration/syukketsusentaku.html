@@ -358,7 +358,7 @@ function clickFire(){
     var errorflg = false
     
     
-    if (document.getElementById("holidaykbn").value == "" || document.getElementById("riyu").value == "") {
+    if (document.getElementById("Absentkbn").value == 1 && ( document.getElementById("holidaykbn").value == "" || document.getElementById("riyu").value == "" )) {
         
             if(document.getElementById("holidaykbn").value == "") {
                 document.getElementById("errorh").innerHTML  = "休暇区分を選択してください";

@@ -172,7 +172,7 @@ function popup_modeless(url){
                                                                                             <input name="endtime1" type="time" id="endtime1" value="{{ endtime1 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)" form="kintaitouroku"/>
                                                                                         </td>
                                                                                         <th scope="col">休憩(h)</th><td class="center" valign="middle"  style="background-color:White;width:60px;text-align: center;" />
-                                                                                            <input name="resttime1" type="number" step="0.01" id="resttime1" value="{{ resttime1 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)" form="kintaitouroku" /> 
+                                                                                            <input name="resttime1" type="text" id="resttime1" value="{{ resttime1 }}" tabindex="2" class="txt_code" style="width:70px;"  form="kintaitouroku" readonly/> 
                                                                                         </td>
                                                                                         <td class="center" valign="middle" style="background-color:gray;width:60px;">
                                                                                             <br />
@@ -200,58 +200,7 @@ function start(value){
      document.getElementById('workerror').innerHTML = "";
      var errorflg = false;
      
-     // Enterキーが押された時にSubmitされるのを抑制する
-    if (document.getElementById("resttime1") != null) {
-        document.getElementById("resttime1").onkeypress = (e) => {
-        // form1に入力されたキーを取得
-        const key = e.keyCode || e.charCode || 0;
-        // 13はEnterキーのキーコード
-            if (key == 13) {
-              // アクションを行わない
-              e.preventDefault();
-            }
-        }
-    }
     
-    // Enterキーが押された時にSubmitされるのを抑制する
-    if (document.getElementById("resttime2") != null) {
-        document.getElementById("resttime2").onkeypress = (e) => {
-        // form1に入力されたキーを取得
-        const key = e.keyCode || e.charCode || 0;
-        // 13はEnterキーのキーコード
-            if (key == 13) {
-              // アクションを行わない
-              e.preventDefault();
-            }
-        }
-    }
-    
-    // Enterキーが押された時にSubmitされるのを抑制する
-    if (document.getElementById("resttime3") != null) {
-        document.getElementById("resttime3").onkeypress = (e) => {
-        // form1に入力されたキーを取得
-        const key = e.keyCode || e.charCode || 0;
-        // 13はEnterキーのキーコード
-            if (key == 13) {
-              // アクションを行わない
-              e.preventDefault();
-            }
-        }
-    }
-    
-    // Enterキーが押された時にSubmitされるのを抑制する
-    if (document.getElementById("resttime4") != null) {
-        document.getElementById("resttime4").onkeypress = (e) => {
-        // form1に入力されたキーを取得
-        const key = e.keyCode || e.charCode || 0;
-        // 13はEnterキーのキーコード
-            if (key == 13) {
-              // アクションを行わない
-              e.preventDefault();
-            }
-        }
-    }
-
      for (var i = 0; i < 4; i++) {
         var i1 = i + 1;
         if(document.getElementById('starttime'+ i1) == null || document.getElementById('endtime'+ i1) == null) {
@@ -291,8 +240,59 @@ function start(value){
            if(errorflg == true){
                 return;
            }
+          var startlis = start[i].toString().padStart(4, '0');
+          var endlis = end[i].toString().padStart(4, '0');
+          var endhourlis = parseInt(endlis.slice(0, 2));
+          var endminlis = parseInt(endlis.slice(2, 4));
+          var starthourlis = parseInt(startlis.slice(0, 2));
+          var startminlis = parseInt(startlis.slice(2, 4));
+          var minlis = endminlis - startminlis;
+          minlis = minlis / 60;
+          var sabunlis =  endhourlis - starthourlis + minlis;
 
-        resttotal =  Number(resttotal) + Number(document.getElementById("resttime" + i1).value);
+         if (sabunlis >= 6 && sabunlis <= 7) {
+            rest = sabunlis - 6
+         }
+         if (sabunlis >= 7 && sabunlis <= 8.5) {
+            rest = 1
+         }
+
+         if (sabunlis >= 8.5 && sabunlis <= 9) {
+            rest = rest + sabunlis - 8.5
+         }
+         if (sabunlis >= 9 && sabunlis <= 12) {
+            rest = 1.5
+         }
+
+         if (sabunlis >= 12 && sabunlis <= 12.5) {
+            rest = rest + sabunlis - 12
+         }
+         if (sabunlis >= 12.5 && sabunlis <= 15.5) {
+            rest = 2
+         }
+
+         if (sabunlis >= 15.5 && sabunlis <= 16) {
+            rest = rest + sabunlis - 15.5
+         }
+         if (sabunlis >= 16 && sabunlis <= 19) {
+            rest = 2.5
+         }
+
+         if (sabunlis >= 19 && sabunlis <= 19.5) {
+            rest = rest + sabunlis - 19
+         }
+         if (sabunlis >= 19.5 && sabunlis <= 22.5) {
+            rest = 3
+         }
+
+         if (sabunlis >= 22.5 && sabunlis <= 23) {
+            rest = rest + sabunlis - 22.5
+         }
+         if (sabunlis >= 23) {
+            rest = 3.5
+         }
+
+         document.getElementById('resttime' + i1).value = rest 
         }
      }
      console.log(start);
@@ -306,7 +306,7 @@ function calc(start,end,resttotal){
      console.log(endstr); 
      document.getElementById("starttimeaa").value = startstr.slice(0, 2) + ":" + startstr.slice(2, 4);
      
-     var endhour = parseInt(endstr.slice(0, 2));
+     
      if (end >= 2400) {
         end = end - 2400;
         var endmidstr = end.toString().padStart(4, '0');
@@ -314,12 +314,56 @@ function calc(start,end,resttotal){
      } else {
         document.getElementById("endtimeaa").value = endstr.slice(0, 2) + ":" + endstr.slice(2, 4);
      }
+     var endhour = parseInt(endstr.slice(0, 2));
      var endmin = parseInt(endstr.slice(2, 4));
-     var endint = parseInt(endstr);
      var starthour = parseInt(startstr.slice(0, 2));
      var startmin = parseInt(startstr.slice(2, 4));
      var min = endmin - startmin;
+     
      min =min / 60;
+     var sabun = endhour - starthour + min
+         if (sabun >= 6 && sabun <= 7) {
+            resttotal = sabun - 6
+         }
+         if (sabun >= 7 && sabun <= 8.5) {
+            resttotal = 1
+         }
+
+         if (sabun >= 8.5 && sabun <= 9) {
+            resttotal = resttotal + sabun - 8.5
+         }
+         if (sabun >= 9 && sabun <= 12) {
+            resttotal = 1.5
+         }
+
+         if (sabun >= 12 && sabun <= 12.5) {
+            resttotal = resttotal + sabun - 12
+         }
+         if (sabun >= 12.5 && sabun <= 15.5) {
+            resttotal = 2
+         }
+
+         if (sabun >= 15.5 && sabun <= 16) {
+            resttotal = resttotal + sabun - 15.5
+         }
+         if (sabun >= 16 && sabun <= 19) {
+            resttotal = 2.5
+         }
+
+         if (sabun >= 19 && sabun <= 19.5) {
+            resttotal = resttotal + sabun - 19
+         }
+         if (sabun >= 19.5 && sabun <= 22.5) {
+            resttotal = 3
+         }
+
+         if (sabun >= 22.5 && sabun <= 23) {
+            resttotal = resttotal + sabun - 22.5
+         }
+         if (sabun >= 23) {
+            resttotal = 3.5
+         }
+     
      var worktime = endhour - starthour + min - resttotal;
      worktime = (Math.round(worktime * 100)) / 100
      console.log(worktime);
@@ -385,7 +429,7 @@ function calc(start,end,resttotal){
                                                                                             <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
                                                                                             <input name="endtime2" type="time" id="endtime2" tabindex="2"value="{{ endtime2 }}" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
-                                                                                            <input name="resttime2" type="number" step="0.01" id="resttime2" value="{{ resttime2 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/> 
+                                                                                            <input name="resttime2" type="text"  id="resttime2" value="{{ resttime2 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" readonly/> 
                                                                                         </td>
                                                                                         <td class="center" valign="middle" style="background-color:gray;width:60px;">
                                                                                             <br />
@@ -443,7 +487,7 @@ function calc(start,end,resttotal){
                                                                                             <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
                                                                                             <input name="endtime3" type="time" id="endtime3" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
-                                                                                            <input name="resttime3" type="number" step="0.01" id="resttime3" value="{{ resttime3 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/> 
+                                                                                            <input name="resttime3" type="text"  id="resttime3" value="{{ resttime3 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" readonly/> 
                                                                                         </td>
                                                                                         <td class="center" valign="middle" style="background-color:gray;width:60px;">
                                                                                             <br />
@@ -501,7 +545,7 @@ function calc(start,end,resttotal){
                                                                                             <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
                                                                                             <input name="endtime4" type="time" id="endtime4" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
-                                                                                            <input name="resttime4" type="number" step="0.01" id="resttime4" value="{{ resttime4 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" onchange="start(this.value)"/>
+                                                                                            <input name="resttime4" type="text" id="resttime4" value="{{ resttime4 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" readonly/>
                                                                                         </td>
                                                                                         <td class="center" valign="middle" style="background-color:gray;width:60px;">
                                                                                             <br />

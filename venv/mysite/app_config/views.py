@@ -825,7 +825,9 @@ def kintaitouroku(request):
             resttime4 = 0
         resttime = float(resttime1) +  float(resttime2) +  float(resttime3) + float(resttime4)
         midtime = 0
-        
+        midover = 0
+        paidtime = 0
+        morningtime = 0
         startn = start.split(':')
         endn = end.split(':')
         starth = int(startn[0])
@@ -836,9 +838,17 @@ def kintaitouroku(request):
         endm = int(endn[1])
         min = endm - startm
         min = min / 60
-
+        
         worktime = endh - starth + min - float(resttime)
         worktime = round(worktime,2)
+        if (worktime < 7.5):
+            paidtime = math.ceil(7.5 - worktime)
+        
+        if (starth <= 8 and starth >= 5 and (endh >= 9 or endh <= 4)):
+            morningtime = 9 - starth - startm / 60
+        if(starth <= 8 and starth >= 5 and (endh < 9 or endh > 4)):
+            morningtime = worktime
+        
         if(startm >  endm):
             worktime = worktime - 1
         if (endh >= 22 or endh <= 5 or starth  >= 22 or starth <= 5):
@@ -857,8 +867,10 @@ def kintaitouroku(request):
                     if ( end > 5 and  start < 22):
                         midtime = 5 - starth - min
                     if ( end > 5 and start >= 22):
-                        midtime = 24 - starth + 4
-                        
+                        midtime = 24 - starth + 4 - startm / 60
+            if (worktime > 7.5):
+                    midover = midtime
+
             
             if (todo4 == ''):
                 context.update({
@@ -909,8 +921,8 @@ def kintaitouroku(request):
                   'holiday' : todo5,
                   'ymd': timestr,
                   'user' : ida,
-            })
-            errflg = True
+                })
+                errflg = True
 
 
         if(t1 == '' and t2 == '' and t3 == '' and t4 == ''):
@@ -981,6 +993,7 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
+            print('abserror')
             errflg = True
         if( (t1 != '' and starttime1 == '')  or (t2 != '' and starttime2 == '') or (t3 != '' and starttime3 == '') or (t4 != '' and starttime4 == '') ):
             context.update({
@@ -1032,6 +1045,7 @@ def kintaitouroku(request):
                   'ymd': timestr,
                   'user' : ida,
             })
+            print('starterror')
             errflg = True
         if( (t1 != '' and endtime1 == '')  or (t2 != '' and endtime2 == '') or (t3 != '' and endtime3 == '') or (t4 != '' and endtime4 == '')  ):
             context.update({
@@ -1083,59 +1097,9 @@ def kintaitouroku(request):
                   'ymd': timestr,
                   'user' : ida,
             })
+            print('enderror')
             errflg = True
-        if( (t1 != '' and resttime1 == '')  or (t2 != '' and resttime2 == '') or (t3 != '' and resttime3 == '') or (t4 != '' and resttime4 == '')  ):
-            context.update({
-                  'resterror': '休憩時間が入力されていません',
-                  'starttime': start,
-                  'endtime': end,
-                  'overtime': over,
-                  'projectname1': t1,
-                  'projectname2': t2,
-                  'projectname3': t3,
-                  'projectname4': t4,
-                  'starttime1': request.POST.get('starttime1',''),
-                  'starttime2': request.POST.get('starttime2',''),
-                  'starttime3': request.POST.get('starttime3',''),
-                  'starttime4': request.POST.get('starttime4',''),
-                  'endtime1': request.POST.get('endtime1',''),
-                  'endtime2': request.POST.get('endtime2',''),
-                  'endtime3': request.POST.get('endtime3',''),
-                  'endtime4': request.POST.get('endtime4',''),
-                  'resttime1': request.POST.get('resttime1',''),
-                  'resttime2': request.POST.get('resttime2',''),
-                  'resttime3': request.POST.get('resttime3',''),
-                  'resttime4': request.POST.get('resttime4',''),
-                  'koutei1': value1,
-                  'koutei2': value2,
-                  'koutei3': value3,
-                  'koutei4': value4,
-                  'kouteiselect1': koutei1,
-                  'kouteiselect2': koutei2,
-                  'kouteiselect3': koutei3,
-                  'kouteiselect4': koutei4,
-                  'gyomu1': gyomu1,
-                  'gyomu2': gyomu2,
-                  'gyomu3': gyomu3,
-                  'gyomu4': gyomu4,
-                  'gyomuselect1': gyomuselect1,
-                  'gyomuselect2': gyomuselect2,
-                  'gyomuselect3': gyomuselect3,
-                  'gyomuselect4': gyomuselect4,
-                  'abs': abs,
-                  'holidaykbn': hol,
-                  'riyu' : riyu,
-                  'chikoku' : todo0,
-                  'hayade'  : todo1,
-                  'soutai'  : todo2,
-                  'hensoku' : todo3,
-                  'midnight': todo4,
-                  'holiday' : todo5,
-                  'ymd': timestr,
-                  'user' : ida,
-            })
-            errflg = True
-            
+        
 
         if( (t1 != '' and koutei1 == '')  or (t2 != '' and koutei2 == '') or (t3 != '' and koutei3 == '') or (t4 != '' and koutei4 == '')):
             context.update({
@@ -1188,6 +1152,7 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
+            print('kouteierror')
             errflg = True
         if( (t1 != '' and gyomuselect1 == '')  or (t2 != '' and gyomuselect2 == '') or (t3 != '' and gyomuselect3 == '') or (t4 != '' and gyomuselect4 == '')):
             context.update({
@@ -1240,6 +1205,7 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
+            print('workerror')
             errflg = True
         if( timestr == ''):
             context.update({
@@ -1288,6 +1254,7 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
+            print('timeerror')
             errflg = True
         if (todo0 == ''):
             todo0db = 0
@@ -1322,6 +1289,7 @@ def kintaitouroku(request):
         if(todo0db == 1 or todo1db == 1 or todo2db == 1 or todo3db == 1 or todo4db == 1 or todo5db == 1 ):
             todok = 1
         if errflg:
+           print('error')
            return render(request, 'registration/kintai.html', context)
         
         
@@ -1334,7 +1302,8 @@ def kintaitouroku(request):
         ymd=timestr,starttime=start,endtime=end,worktime=worktime,overtime=over,
         resttime=resttime, attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
         todoke_tikoku=todo0db, todoke_soutai=todo1db, todoke_midnight=todo2db, todoke_hayade=todo3db, 
-        todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,
+        todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,mntime = midtime,mnovertime = midover,
+        paidtime = paidtime,
         projectname1 = t1,kouteiname1 = koutei1, workname1 = gyomuselect1, start1 = starttime1, end1 = endtime1, rest1 = resttime1,
         projectname2 = t2,kouteiname2 = koutei2, workname2 = gyomuselect2, start2 = starttime2, end2 = endtime2, rest2 = resttime2,
         projectname3 = t3,kouteiname3 = koutei3, workname3 = gyomuselect3, start3 = starttime3, end3 = endtime3, rest3 = resttime3,
