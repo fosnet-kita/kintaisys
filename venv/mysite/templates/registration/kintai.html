@@ -3,12 +3,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" />
     <title>勤怠入力画面</title>
+    <link rel='stylesheet'  href="./../../static/css/style.css">
     <meta http-equiv="Content-Type"        content="text/html; charset=UTF-8" />
     <meta http-equiv="Content-Language"    content="ja" />
     <meta http-equiv="Content-Script-Type" content="text/javascript; charset=UTF-8" />
     <meta http-equiv="Content-Style-Type"  content="text/css" />
 </head>
-入力日   社員CD:{{ user }}<br>
+<table class="tbl_title" width="40%" style="text-align:center">
+                                <tr>
+                                    <td colspan="2" class="title">勤怠入力</td>
+                                </tr>
+                                <tr>
+                                    <td>社員CD:{{ user }}</td>
+                                </tr>
+                                
+</table>
+入力日   <br>
 <div id="ctl00_contents_Panel2" 
 style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">
                 <table id="Table22" class="tbl_input"  border="1">

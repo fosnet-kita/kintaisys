@@ -1,14 +1,17 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
 {% block customcss %}
-    <link rel='stylesheet' type='text/css' href="{% static 'css/accounts/style.css' %}">
+    
 {% endblock customcss %}
 {% block header %}
 {% endblock header %}
 {% block content %}
 <html>
+<head>
+<link rel='stylesheet'  href="./../../static/css/style.css">
+<title>ログイン画面</title>
+</head>
   <body>
-    <h1>ログイン画面</h1>
     <form action="{% url  'koutuhi' %}" method="POST" id="kintai" name="kintai">
     {% csrf_token %}
     <table width="50%" >
@@ -16,7 +19,10 @@
     <!--{{ form.as_p }}-->
                         <tr>
                         <td>
-                            <table class="tbl_title" width="100%">
+                            <table class="tbl_title" width="100%" style="text-align:center">
+                                <tr>
+                                    <td colspan="2" class="title">ログイン</td>
+                                </tr>
                                 <tr>
 	                                <td class="lbl_title">
 	                                    
@@ -37,16 +43,16 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="left">
-                                        <button type="submit" class="btn btn-primary btn-lg">ログイン</button>
+                                    <td>
+                                        <button type="submit"  style="width:200px">ログイン</button>
                                     </form>
                                     </td>
                                 </tr>                              
                                <tr>
-                                    <td align="left" >                                     
+                                    <td>                                     
                                         <form method="POST"  action="{% url  'password' %}" name="password">
                                         {% csrf_token %}
-                                          <button type="submit" class="btn btn-primary btn-lg">パスワード変更</button>
+                                          <button type="submit"  style="width:200px">パスワード変更</button>
                                         </form>
                                     </td>
                                     

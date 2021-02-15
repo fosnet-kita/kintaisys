@@ -1,10 +1,32 @@
 @charset "UTF-8";
 
-.mysystem-header{
-  background: #3333FF !important;
-  color: white !important;
+/* タイトル及びボタンCSS */
+* 	
+{
+    font-family:  MS UI Gothic, Verdana, Helvetica;
+	font-weight:  400;
 }
-.mysystem-border{
-  background: #3333FF !important;
-  color: white !important;
+
+.tbl_title
+{
+	font-family: Verdana, Helvetica; 
+}
+
+.tbl_title td
+{
+	font-size: 12px;
+	height	 : 30px;
+}
+
+.tbl_title td.title
+{
+	font-size		:18px;
+	font-weight		:bold;
+	color			:White;
+	background-color:Navy;
+	border-style	:inset;
+	border-width	:2px;
+	text-align		:center;
+	width           :40%;
+	height			:30px;
 }

@@ -36,7 +36,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('aaa/', views.index, name='index'),
     #path('accounts/login/', views.login, name='login'),
-    path('accounts/password_change/', views.password, name='password'),
+    path('accounts/passwordchange/', views.password, name='password'),
     path('accounts/project/', views.project, name='project'),
     path('accounts/koutuhilist/', views.koutuhilist, name='koutuhilist'),
     path('accounts/loginkoutuhi/', views.koutuhi, name='koutuhi'),
@@ -53,7 +53,7 @@ urlpatterns = [
     path('', include(tf_twilio_urls)),
     path('', include(tf_urls)),
     path(r'user_create/', views.UserCreate.as_view(), name='user_create'),
-    path(r'user_login/', views.CustomLoginView.as_view(), name='login'),
+    #path(r'user_login/', views.CustomLoginView.as_view(), name='login'),
     path(r'user_create/done', views.UserCreateDone.as_view(), name='user_create_done'),
     path(r'user_create/complete/<token>/', views.UserCreateComplete.as_view(), name='user_create_complete'),
     

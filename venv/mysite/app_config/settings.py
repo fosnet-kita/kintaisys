@@ -147,7 +147,7 @@ STATIC_ROOT = '/var/www/{}/static'.format(PROJECT_NAME)
 
 LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = 'two_factor:koutuhi'
-LOGOUT_REDIRECT_URL = '/accounts/homeaaa'
+LOGOUT_REDIRECT_URL = '/accounts/login'
 
 #EMAIL_HOST = "smtp.gmail.com"
 #EMAIL_PORT = 587

@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='koutuhilist',
             name='tourokudate',
-            field=models.DateField(default='TODAY', max_length=16, verbose_name='tourokudate'),
+            field=models.DateField(default='2021-01-01', max_length=16, verbose_name='tourokudate'),
         ),
         migrations.AddField(
             model_name='koutuhilist',
