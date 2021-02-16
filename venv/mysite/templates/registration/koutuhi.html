@@ -175,12 +175,7 @@ idmax = 0;
     document.getElementById("error7").innerHTML  = "";
     document.getElementById("error8").innerHTML  = "";
     document.getElementById("error9").innerHTML  = "";
-
     
-    if(v1==null || v1.length != 8 || isNaN(v1)){
-        document.getElementById("error1").innerHTML  = "開始日付は8文字で入力してください";
-        errflg = true;
-    }
  
     //年,月,日を取得する
     var y1 = parseInt(v1.substr(0,4));
@@ -306,6 +301,15 @@ idmax = 0;
         document.getElementById("error8").innerHTML  = "";
         document.getElementById("error9").innerHTML  = "";
         
+        document.getElementById("startdate").value = "";
+        document.getElementById("enddate").value  = "";
+        document.getElementById("homon").value    = "";
+        document.getElementById("kamoku").value   = "";
+        document.getElementById("syudan").value   = "";
+        document.getElementById("transport").value= "";
+        document.getElementById("KSeikyu").checked= false;
+
+        
         console.log(rowId);
         var e1 = document.getElementById("startdate" + rowId);
         var e2 = document.getElementById("enddate" + rowId);
@@ -428,7 +432,14 @@ idmax = 0;
     }
     document.getElementById("transporttotal").value = aaa;
         
-    
+    document.getElementById("startdate").value = "";
+    document.getElementById("enddate").value  = "";
+    document.getElementById("homon").value    = "";
+    document.getElementById("kamoku").value   = "";
+    document.getElementById("syudan").value   = "";
+    document.getElementById("transport").value= "";
+    document.getElementById("KSeikyu").checked= false;
+
     }
 
     function coldel(obj) {

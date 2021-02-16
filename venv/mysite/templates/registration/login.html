@@ -16,7 +16,6 @@
     {% csrf_token %}
     <table width="50%" >
     {% csrf_token %}
-    <!--{{ form.as_p }}-->
                         <tr>
                         <td>
                             <table class="tbl_title" width="100%" style="text-align:center">
@@ -44,7 +43,8 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button type="submit"  style="width:200px">ログイン</button>
+                                        <button type="submit"  style="width:200px" onClick='tab("/accounts/kintai/")'>ログイン</button>
+</button>
                                     </form>
                                     </td>
                                 </tr>                              
@@ -61,6 +61,14 @@
                         </td>
                     </tr>
                  </table>
+<script language="javascript" type="text/javascript">
+        function tab(url) {
+            var newWin = window.open(
+		    url
+	    );
+ 
+        }
+</script>
   </body>
 </html>
 {% endblock content %}

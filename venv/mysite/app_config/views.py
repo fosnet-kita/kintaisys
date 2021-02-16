@@ -25,6 +25,7 @@ from .forms import CustomUserCreateForm
 from django.contrib.auth.views import LoginView
 from .forms import CustomLoginForm
 from . import utils
+import urllib.request
 
 import datetime
 import calendar
@@ -40,15 +41,6 @@ User = get_user_model()
 def index(request):
     template = loader.get_template('index.html')
     return HttpResponse(template.render( None, request))
-    
-
-    
-def kintai(request):
-    ida = request.session.get('User','')
-    context = {
-                   'user':ida,
-              }
-    return render(request, 'registration/kintai.html', context)
     
 def login(request):
     template = loader.get_template('registration/login.html')
@@ -142,8 +134,10 @@ def koutuhi(request):
                    'cus': listtori,
                    'user':id,
               }
-         url = 'http://127.0.0.1:8000/accounts/kintai/'
-         webbrowser.open(url,2)
+         print('open')
+         #url = "https://amazon.co.jp"
+         #webbrowser.open(url)
+         #breakpoint()
          return render(request, 'registration/koutuhi.html', context)
     context = {
               'error': 'ユーザーIDまたはパスワードが違います',
@@ -561,19 +555,20 @@ def kintaiproject(request):
 def kintaitouroku(request):
     template = loader.get_template('registration/kintai.html')
     btt = request.POST.get('btnExecH','')
-    start = request.POST.get('starttime','00:00')
-    end = request.POST.get('endtime','00:00')
-   
     abs  = request.POST.get('abs','')
-    timestr = request.session.get('dateselect','2021-01-01')
+    nowyear = str(datetime.date.today().year)
+    nowmonth = str(format(datetime.date.today().month,'02'))
+    nowday = str(format(datetime.date.today().day,'02'))
+    nowdate = nowyear + "-" +  nowmonth +  "-" + nowday
+    timestr = request.POST.get('dateselect',nowdate)
     
     ida = request.session.get('User','')
     listf = kintai_touroku_info.objects.filter(ymd = timestr,syaincd = ida)
     errflg = False
     context = {}   
     syainname =  syain_info.objects.all()   
-    start = request.POST.get('starttime', '00:00')
-    end = request.POST.get('endtime', '00:00')
+    start = request.POST.get('starttime', '')
+    end = request.POST.get('endtime', '')
     over = request.POST.get('overtime', '')
 
     tourokuope = request.POST.get('tourokuope','')
@@ -812,6 +807,8 @@ def kintaitouroku(request):
         absdb = 0
     if(abs == '欠勤'):
         absdb = 1
+        
+
 
     if(abs == '出勤' or abs == ''):
     
@@ -828,119 +825,6 @@ def kintaitouroku(request):
         midover = 0
         paidtime = 0
         morningtime = 0
-        startn = start.split(':')
-        endn = end.split(':')
-        starth = int(startn[0])
-        endh = int(endn[0])
-        if(starth >= endh):
-            endh = endh + 24
-        startm = int(startn[1])
-        endm = int(endn[1])
-        min = endm - startm
-        min = min / 60
-        
-        worktime = endh - starth + min - float(resttime)
-        worktime = round(worktime,2)
-        if (worktime < 7.5):
-            paidtime = math.ceil(7.5 - worktime)
-        
-        if (starth <= 8 and starth >= 5 and (endh >= 9 or endh <= 4)):
-            morningtime = 9 - starth - startm / 60
-        if(starth <= 8 and starth >= 5 and (endh < 9 or endh > 4)):
-            morningtime = worktime
-        
-        if(startm >  endm):
-            worktime = worktime - 1
-        if (endh >= 22 or endh <= 5 or starth  >= 22 or starth <= 5):
-        
-            if (starth < 22 and starth > 5):
-                if (endh >= 22):
-                    midtime = endh - 22 + endm / 60
-                if (endh <= 5):
-                    midtime = endh + 2 + endm / 60
-            else:
-                if (starth >= 22 or starth <= 5):
-                    if ( endh <= 5 and starth < 22):
-                        midtime = endh - starth + min
-                    if ( endh <= 5 and starth >= 22):
-                        midtime = endh + 24 - starth - min
-                    if ( end > 5 and  start < 22):
-                        midtime = 5 - starth - min
-                    if ( end > 5 and start >= 22):
-                        midtime = 24 - starth + 4 - startm / 60
-            if (worktime > 7.5):
-                    midover = midtime
-
-            
-            if (todo4 == ''):
-                context.update({
-                  'miderror': '深夜有が選択されていません',
-                  'starttime': start,
-                  'endtime': end,
-                  'overtime': over,
-                  'projectname1': t1,
-                  'projectname2': t2,
-                  'projectname3': t3,
-                  'projectname4': t4,
-                  'starttime1': request.POST.get('starttime1',''),
-                  'starttime2': request.POST.get('starttime2',''),
-                  'starttime3': request.POST.get('starttime3',''),
-                  'starttime4': request.POST.get('starttime4',''),
-                  'endtime1': request.POST.get('endtime1',''),
-                  'endtime2': request.POST.get('endtime2',''),
-                  'endtime3': request.POST.get('endtime3',''),
-                  'endtime4': request.POST.get('endtime4',''),
-                  'resttime1': request.POST.get('resttime1',''),
-                  'resttime2': request.POST.get('resttime2',''),
-                  'resttime3': request.POST.get('resttime3',''),
-                  'resttime4': request.POST.get('resttime4',''),
-                  'koutei1': value1,
-                  'koutei2': value2,
-                  'koutei3': value3,
-                  'koutei4': value4,
-                  'kouteiselect1': koutei1,
-                  'kouteiselect2': koutei2,
-                  'kouteiselect3': koutei3,
-                  'kouteiselect4': koutei4,
-                  'gyomu1': gyomu1,
-                  'gyomu2': gyomu2,
-                  'gyomu3': gyomu3,
-                  'gyomu4': gyomu4,
-                  'gyomuselect1': gyomuselect1,
-                  'gyomuselect2': gyomuselect2,
-                  'gyomuselect3': gyomuselect3,
-                  'gyomuselect4': gyomuselect4,
-                  'abs': abs,
-                  'holidaykbn': hol,
-                  'riyu' : riyu,
-                  'chikoku' : todo0,
-                  'hayade'  : todo1,
-                  'soutai'  : todo2,
-                  'hensoku' : todo3,
-                  'midnight': todo4,
-                  'holiday' : todo5,
-                  'ymd': timestr,
-                  'user' : ida,
-                })
-                errflg = True
-
-
-        if(t1 == '' and t2 == '' and t3 == '' and t4 == ''):
-            context.update({
-                  'projecterror': 'プロジェクト登録をしてください',
-                  'ymd': timestr,
-                  'abs': abs,
-                  'holidaykbn': hol,
-                  'riyu' : riyu,
-                  'chikoku' : todo0,
-                  'hayade'  : todo1,
-                  'soutai'  : todo2,
-                  'hensoku' : todo3,
-                  'midnight': todo4,
-                  'holiday' : todo5,
-                  'user' : ida,
-            })
-            errflg = True
         
         if( abs == '' ):
             context.update({
@@ -995,6 +879,24 @@ def kintaitouroku(request):
             })
             print('abserror')
             errflg = True
+
+        if(t1 == '' and t2 == '' and t3 == '' and t4 == ''):
+            context.update({
+                  'projecterror': 'プロジェクト登録をしてください',
+                  'ymd': timestr,
+                  'abs': abs,
+                  'holidaykbn': hol,
+                  'riyu' : riyu,
+                  'chikoku' : todo0,
+                  'hayade'  : todo1,
+                  'soutai'  : todo2,
+                  'hensoku' : todo3,
+                  'midnight': todo4,
+                  'holiday' : todo5,
+                  'user' : ida,
+            })
+            errflg = True
+        
         if( (t1 != '' and starttime1 == '')  or (t2 != '' and starttime2 == '') or (t3 != '' and starttime3 == '') or (t4 != '' and starttime4 == '') ):
             context.update({
                   'starterror': '開始時刻が入力されていません',
@@ -1152,7 +1054,6 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
-            print('kouteierror')
             errflg = True
         if( (t1 != '' and gyomuselect1 == '')  or (t2 != '' and gyomuselect2 == '') or (t3 != '' and gyomuselect3 == '') or (t4 != '' and gyomuselect4 == '')):
             context.update({
@@ -1254,7 +1155,6 @@ def kintaitouroku(request):
                   'user' : ida,
 
             })
-            print('timeerror')
             errflg = True
         if (todo0 == ''):
             todo0db = 0
@@ -1289,14 +1189,105 @@ def kintaitouroku(request):
         if(todo0db == 1 or todo1db == 1 or todo2db == 1 or todo3db == 1 or todo4db == 1 or todo5db == 1 ):
             todok = 1
         if errflg:
-           print('error')
            return render(request, 'registration/kintai.html', context)
         
+        startn = start.split(':')
+        endn = end.split(':')
+        starth = int(startn[0])
+        endh = int(endn[0])
+        if(starth >= endh):
+            endh = endh + 24
+        startm = int(startn[1])
+        endm = int(endn[1])
+        min = endm - startm
+        min = min / 60
         
+        worktime = endh - starth + min - float(resttime)
+        worktime = round(worktime,2)
+        if (worktime < 7.5):
+            paidtime = math.ceil(7.5 - worktime)
         
+        if (starth <= 8 and starth >= 5 and (endh >= 9 or endh <= 4)):
+            morningtime = 9 - starth - startm / 60
+        if(starth <= 8 and starth >= 5 and (endh < 9 or endh > 4)):
+            morningtime = worktime
         
+        if(startm >  endm):
+            worktime = worktime - 1
+        if (endh >= 22 or endh <= 5 or starth  >= 22 or starth <= 5):
+        
+            if (starth < 22 and starth > 5):
+                if (endh >= 22):
+                    midtime = endh - 22 + endm / 60
+                if (endh <= 5):
+                    midtime = endh + 2 + endm / 60
+            else:
+                if (starth >= 22 or starth <= 5):
+                    if ( endh <= 5 and starth < 22):
+                        midtime = endh - starth + min
+                    if ( endh <= 5 and starth >= 22):
+                        midtime = endh + 24 - starth - min
+                    if ( end > 5 and  start < 22):
+                        midtime = 5 - starth - min
+                    if ( end > 5 and start >= 22):
+                        midtime = 24 - starth + 4 - startm / 60
+            if (worktime > 7.5):
+                    midover = midtime
+                    
+            if (todo4 == ''):
+                context.update({
+                  'miderror': '深夜有が選択されていません',
+                  'starttime': start,
+                  'endtime': end,
+                  'overtime': over,
+                  'projectname1': t1,
+                  'projectname2': t2,
+                  'projectname3': t3,
+                  'projectname4': t4,
+                  'starttime1': request.POST.get('starttime1',''),
+                  'starttime2': request.POST.get('starttime2',''),
+                  'starttime3': request.POST.get('starttime3',''),
+                  'starttime4': request.POST.get('starttime4',''),
+                  'endtime1': request.POST.get('endtime1',''),
+                  'endtime2': request.POST.get('endtime2',''),
+                  'endtime3': request.POST.get('endtime3',''),
+                  'endtime4': request.POST.get('endtime4',''),
+                  'resttime1': request.POST.get('resttime1',''),
+                  'resttime2': request.POST.get('resttime2',''),
+                  'resttime3': request.POST.get('resttime3',''),
+                  'resttime4': request.POST.get('resttime4',''),
+                  'koutei1': value1,
+                  'koutei2': value2,
+                  'koutei3': value3,
+                  'koutei4': value4,
+                  'kouteiselect1': koutei1,
+                  'kouteiselect2': koutei2,
+                  'kouteiselect3': koutei3,
+                  'kouteiselect4': koutei4,
+                  'gyomu1': gyomu1,
+                  'gyomu2': gyomu2,
+                  'gyomu3': gyomu3,
+                  'gyomu4': gyomu4,
+                  'gyomuselect1': gyomuselect1,
+                  'gyomuselect2': gyomuselect2,
+                  'gyomuselect3': gyomuselect3,
+                  'gyomuselect4': gyomuselect4,
+                  'abs': abs,
+                  'holidaykbn': hol,
+                  'riyu' : riyu,
+                  'chikoku' : todo0,
+                  'hayade'  : todo1,
+                  'soutai'  : todo2,
+                  'hensoku' : todo3,
+                  'midnight': todo4,
+                  'holiday' : todo5,
+                  'ymd': timestr,
+                  'user' : ida,
+                })
+                return render(request, 'registration/kintai.html', context)
 
 
+        
         #DB格納(出勤)
         b = kintai_touroku_info(syaincd=ida,syainname = name, 
         ymd=timestr,starttime=start,endtime=end,worktime=worktime,overtime=over,
@@ -1313,7 +1304,6 @@ def kintaitouroku(request):
         workcd1 = workcd1,workcd2 = workcd2,workcd3 = workcd3,workcd4 = workcd4)
     #DB格納(欠勤)
     else:
-        print('kekkin')
         start = '00:00'
         end = '00:00'
         worktime= 0.0
@@ -1332,7 +1322,6 @@ def kintaitouroku(request):
     if (len(listf) == 0):
        b.save()
     else:
-       print('update')
        b =  kintai_touroku_info.objects.filter(ymd = timestr)
        b.update(starttime=start,endtime=end,worktime=worktime,overtime=over,
        resttime=resttime,attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
@@ -1371,12 +1360,14 @@ def kintaitouroku(request):
 #勤怠入力画面ロード   
 def kintaiload(request):
     template = loader.get_template('registration/kintai.html')
-    monthyear =request.POST.get('dateselect')
-    request.session['dateselect'] = request.POST.get('dateselect')
     id = request.session.get('User','')
-    print(monthyear)
+    nowyear = str(datetime.date.today().year)
+    nowmonth = str(format(datetime.date.today().month,'02'))
+    nowday = str(format(datetime.date.today().day,'02'))
+    nowdate = nowyear + "-" +  nowmonth +  "-" + nowday
+    monthyear = request.POST.get('dateselect',nowdate)
+
     listf = kintai_touroku_info.objects.filter(ymd = monthyear, syaincd = id)
-    print(len(listf))
     if (len(listf) == 1):
 
         attkbn = listf[0].attkbn
@@ -1408,8 +1399,6 @@ def kintaiload(request):
         todo3 = listf[0].todoke_hayade
         todo4 = listf[0].todoke_irregular
         todo5 = listf[0].todoke_holiwork
-        print(start2)
-        print(end2)
         koutei1 = project_work.objects.filter(projectname=listf[0].projectname1).distinct('kouteiname')
         koutei2 = project_work.objects.filter(projectname=listf[0].projectname2).distinct('kouteiname')
         koutei3 = project_work.objects.filter(projectname=listf[0].projectname3).distinct('kouteiname')
@@ -1577,10 +1566,10 @@ class CustomLoginView(LoginView):
 
 class UserCreateDone(generic.TemplateView):
     """仮登録完了"""
-    template_name = 'customLogin/user_create_done.html'
-
+    
     def get(self, request, **kwargs):
         if request.user.is_authenticated:
+            breakpoint()
             return HttpResponseRedirect('/')
         return super().get(request, **kwargs)
 
