@@ -15,7 +15,7 @@
 </table>
 
 <body>
-    <form action="{% url  'kintaitouroku' %}" method="POST" id="kintaitouroku" name="kintaitouroku">
+    <form action="{% url  'kintaiload' %}" method="POST" id="kintaitouroku" name="kintaitouroku">
     {% csrf_token %}
     <input type="submit" style="width:139px;" valign="middle" value="戻る"  name= "project" id="project"  class="btn_normal" />
     </form>
