@@ -263,7 +263,7 @@ function start(value){
          if (sabunlis >= 6 && sabunlis <= 7) {
             rest = sabunlis - 6
          }
-         if (sabunlis >= 7 && sabunlis <= 8.5) {
+         if (sabunlis >= 7) {
             rest = 1
          }
 
@@ -301,6 +301,8 @@ function start(value){
          if (sabunlis >= 23) {
             rest = 3.5
          }
+         
+         rest = (Math.round(rest * 100)) / 100
 
          document.getElementById('resttime' + i1).value = rest 
         }
@@ -335,35 +337,35 @@ function calc(start,end,resttotal){
          if (sabun >= 6 && sabun <= 7) {
             resttotal = sabun - 6
          }
-         if (sabun >= 7 && sabun <= 8.5) {
+         if (sabun >= 7) {
             resttotal = 1
          }
 
          if (sabun >= 8.5 && sabun <= 9) {
             resttotal = resttotal + sabun - 8.5
          }
-         if (sabun >= 9 && sabun <= 12) {
+         if (sabun >= 9) {
             resttotal = 1.5
          }
 
          if (sabun >= 12 && sabun <= 12.5) {
             resttotal = resttotal + sabun - 12
          }
-         if (sabun >= 12.5 && sabun <= 15.5) {
+         if (sabun >= 12.5) {
             resttotal = 2
          }
 
          if (sabun >= 15.5 && sabun <= 16) {
             resttotal = resttotal + sabun - 15.5
          }
-         if (sabun >= 16 && sabun <= 19) {
+         if (sabun >= 16) {
             resttotal = 2.5
          }
 
          if (sabun >= 19 && sabun <= 19.5) {
             resttotal = resttotal + sabun - 19
          }
-         if (sabun >= 19.5 && sabun <= 22.5) {
+         if (sabun >= 19.5) {
             resttotal = 3
          }
 
@@ -373,7 +375,7 @@ function calc(start,end,resttotal){
          if (sabun >= 23) {
             resttotal = 3.5
          }
-     
+     resttotal = (Math.round(resttotal * 100)) / 100
      var worktime = endhour - starthour + min - resttotal;
      worktime = (Math.round(worktime * 100)) / 100
      console.log(worktime);
