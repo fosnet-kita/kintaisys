@@ -6,6 +6,7 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import get_template
+from django.core.mail import send_mail
 from django.views import generic
 from .forms import CustomUserCreateForm
 from django.contrib.auth.views import LoginView
@@ -15,7 +16,7 @@ from . import utils
 User = get_user_model()
 
 class UserCreate(generic.CreateView):
-    """ƒ†[ƒU“o˜^"""
+    """ãƒ¦ãƒ¼ã‚¶ç™»éŒ²"""
     template_name = 'customLogin/user_create.html'
     form_class = CustomUserCreateForm
 
@@ -25,12 +26,12 @@ class UserCreate(generic.CreateView):
         return super().get(request, **kwargs)
 
     def form_valid(self, form):
-        # ‰¼“o˜^
+        # ä»®ç™»éŒ²
         user = form.save(commit=False)
         user.is_active = False
         user.save()
 
-        # ƒ[ƒ‹‘—M
+        # ãƒ¡ãƒ¼ãƒ«é€ä¿¡
         current_site = get_current_site(self.request)
         domain = current_site.domain
         context = {
@@ -49,12 +50,12 @@ class UserCreate(generic.CreateView):
         
         
 class UserCreateComplete(generic.TemplateView):
-    """–{“o˜^Š®—¹"""
+    """æœ¬ç™»éŒ²å®Œäº†"""
     template_name = 'customLogin/user_create_complete.html'
-    timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60 * 60 * 24)  # ƒfƒtƒHƒ‹ƒg‚Å‚Í1“úˆÈ“à
+    timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60 * 60 * 24)  # ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ã¯1æ—¥ä»¥å†…
 
     def get(self, request, **kwargs):
-        """token‚ª³‚µ‚¯‚ê‚Î–{“o˜^."""
+        """tokenãŒæ­£ã—ã‘ã‚Œã°æœ¬ç™»éŒ²."""
         if request.user.is_authenticated:
             return HttpResponseRedirect('/')
 
@@ -62,28 +63,28 @@ class UserCreateComplete(generic.TemplateView):
         try:
             user_pk = loads(token, max_age=self.timeout_seconds)
 
-        # ŠúŒÀØ‚ê
+        # æœŸé™åˆ‡ã‚Œ
         except SignatureExpired:
             return HttpResponseBadRequest()
 
-        # token‚ªŠÔˆá‚Á‚Ä‚¢‚é
+        # tokenãŒé–“é•ã£ã¦ã„ã‚‹
         except BadSignature:
             return HttpResponseBadRequest()
 
-        # token‚Í–â‘è‚È‚µ
+        # tokenã¯å•é¡Œãªã—
         try:
             user = User.objects.get(pk=user_pk)
         except User.DoenNotExist:
             return HttpResponseBadRequest()
 
         if not user.is_active:
-            # –â‘è‚È‚¯‚ê‚Î–{“o˜^‚Æ‚·‚é
+            # å•é¡Œãªã‘ã‚Œã°æœ¬ç™»éŒ²ã¨ã™ã‚‹
             user.is_active = True
             user.is_staff = True
             user.is_superuser = True
             user.save()
 
-            # QRƒR[ƒh¶¬
+            # QRã‚³ãƒ¼ãƒ‰ç”Ÿæˆ
             request.session["img"] = utils.get_image_b64(utils.get_auth_url(user.email, utils.get_secret(user)))
 
             return super().get(request, **kwargs)
@@ -92,7 +93,7 @@ class UserCreateComplete(generic.TemplateView):
 
 
 class CustomLoginView(LoginView):
-    """ƒƒOƒCƒ“"""
+    """ãƒ­ã‚°ã‚¤ãƒ³"""
     form_class = CustomLoginForm
     template_name = 'customLogin/login.html'
 

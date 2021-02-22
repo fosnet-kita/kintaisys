@@ -43,7 +43,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button type="submit"  style="width:200px" onClick='tab("/accounts/kintai/")'>ログイン</button>
+                                        <button type="button"  style="width:200px" onClick='tab("/accounts/kintai/")'>ログイン</button>
 </button>
                                     </form>
                                     </td>
@@ -63,6 +63,7 @@
                  </table>
 <script language="javascript" type="text/javascript">
         function tab(url) {
+            document.kintai.submit();
             var newWin = window.open(
 		    url
 	    );

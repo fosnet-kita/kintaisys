@@ -27,7 +27,7 @@
 
 <div id="content-main">
 <h1>Sign in.</h1>
-<form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+<form action="{% url 'user_create_done' %}" method="post" id="login-form">{% csrf_token %}
     {{ form.non_field_errors }}
     {% for field in form %}
     <div class="form-row">
@@ -44,7 +44,7 @@
 <hr>
 <div class="card col-md-6">
     <div class="card-body">
-        <a href="{% url 'user_create' %}" class="btn btn-success btn-lg btn-block" >Sign up.</a>
+        <a href="{% url 'user_create' %}" class="btn btn-success btn-lg btn-block" >Sign upaa.</a>
     </div>
 </div>
 

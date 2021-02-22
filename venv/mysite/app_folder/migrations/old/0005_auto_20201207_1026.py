@@ -6,17 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_folder', '0004_auto_20201127_2046'),
+        ('app_folder', '0004_auto_20201211_2222'),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='projectwork',
-        ),
-        migrations.AlterModelOptions(
-            name='sampledb',
-            options={},
-        ),
         migrations.RemoveField(
             model_name='sampledb',
             name='customname',

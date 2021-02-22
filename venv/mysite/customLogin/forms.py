@@ -19,7 +19,7 @@ class CustomUserCreateForm(UserCreationForm):
             field.widget.attrs['placeholder'] = field.label
 
 class CustomLoginForm(AuthenticationForm):
-    """カスタムログインフォーム"""
+    """繧ｫ繧ｹ繧ｿ繝繝ｭ繧ｰ繧､繝ｳ繝輔か繝ｼ繝"""
     token = forms.CharField(max_length=254, label="Google Authenticator OTP")
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,7 +28,7 @@ class CustomLoginForm(AuthenticationForm):
             field.widget.attrs['placeholder'] = field.label
 
     def confirm_login_allowed(self, user):
-        """二要素認証チェック"""
+        """莠瑚ｦ∫ｴ隱崎ｨｼ繝√ぉ繝�繧ｯ"""
         if utils.get_token(user) != self.cleaned_data.get('token'):
             raise forms.ValidationError(
                 "'Google Authenticator OTP' is invalid."

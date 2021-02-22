@@ -1,17 +1,17 @@
 {% extends "accounts/base.html" %}
-
-
+{% load i18n %}
+{% load static %}
 {% block bodyclass %}{{ block.super }} login{% endblock %}
 {% block usertools %}{% endblock %}
 {% block nav-global %}{% endblock %}
 {% block content_title %}{% endblock %}
-{% block breadcrumbs %}{% endblock %}?
+{% block breadcrumbs %}{% endblock %}\
 {% block extrastyle %}
     {{ block.super }}
 {% endblock %}
 
 {% block content %}
-<form action="{% url  'user_create_done' %}" method="post">
+<form action="" method="post">
     {{ form.non_field_errors }}
     {% for field in form %}
     <div class="form-row">
@@ -21,7 +21,7 @@
     {% endfor %}
     {% csrf_token %}
     <div class="submit-row">
-      <input type="submit" value="Sign up" />
+      <input type="submit" value="{% trans 'Sign up' %}" />
     </div>
 </form>
 {% endblock %}

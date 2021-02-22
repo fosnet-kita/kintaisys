@@ -5,13 +5,10 @@ from app_folder.models import project_work
 from app_folder.models import torihikisaki_list
 from app_folder.models import trans_info
 from app_folder.models import kintai_touroku_info
-from app_folder.models import project_uchiwake
 from django.db.models import Avg, Max, Min, Sum
 from django.template import loader
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from django.views import generic
-#from xoxzo.cloudpy import XoxzoClient
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -19,12 +16,28 @@ from django.core.signing import BadSignature, SignatureExpired, loads,dumps
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.template.loader import get_template
 from django.views import generic
 from .forms import CustomUserCreateForm
 from django.contrib.auth.views import LoginView
+from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.http.response import JsonResponse
+
+#from google2authtest.apps.utils import get_secret, get_image_b64, get_auth_url
+
+#from cms.models.two_auth import TwoAuth
+
+
+
 from .forms import CustomLoginForm
 from . import utils
+from django_otp.admin import OTPAdminSite
+from django.contrib.auth.models import User
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django_otp.plugins.otp_totp.admin import TOTPDeviceAdmin
+from django.core.mail import send_mail
+from twilio.rest import Client
 import urllib.request
 
 import datetime
@@ -32,11 +45,33 @@ import calendar
 import locale
 import os
 import secrets
-
-# Create your views here.
+import qrcode
+import pyotp
+import time
 import webbrowser
 
+import sys
+import smtplib
+from email.mime.text import MIMEText
+from email.utils import formatdate
+import smtplib, ssl
+import tkinter as tk
+import tkinter.simpledialog as simpledialog
+from email.mime.application import MIMEApplication
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+from email import encoders
+from os.path import basename
+
 User = get_user_model()
+#win = tk.Tk()
+
+import subprocess
+
+
+text_name = ""
+
 
 def index(request):
     template = loader.get_template('index.html')
@@ -112,38 +147,89 @@ def koutuhi(request):
     passw = request.POST['Pass']
     
     list =  syain_info.objects.all()
-    secret_key = secrets.randbelow(10000)
-    message = "こちらはXOXZOです。あなたの暗証番号は %04d です" % secret_key
-
-    # APIを呼び出すための秘密鍵は、環境変数に保存されているものとします
-    # SIDとTOKENは https://www.xoxzo.com/ からサインアップして入手してください
-    sid = os.getenv('XOXZO_API_SID')
-    auth_token = os.getenv('XOXZO_API_AUTH_TOKEN')
-
-    # SMSの送信
-    #xc = XoxzoClient(sid=sid, auth_token=auth_token)
-    #result = xc.send_sms(message=message, recipient="+818050213916", sender="XOXZO")
 
     for i in range(len(list)):
       syaincd=list[i].syaincd
       password=list[i].password
+      email=list[i].email
       print(list[i].syaincd)
       print(list[i].password)
+      print(list[i].email)
       if (id == syaincd and passw == password):
+         #current_site = get_current_site(self.request)
+         #domain = current_site.domain
+         #
          context = {
-                   'cus': listtori,
                    'user':id,
               }
+         # ユーザーに渡す乱数を作成
+         random_base32 = pyotp.random_base32()
+         # uriを作成
+         uri = pyotp.totp.TOTP('base32secret3232').provisioning_uri(name="j1409032@yahoo.co.jp",issuer_name="サンプルアプリ")
+         # QRコードを作成
+         img = qrcode.make(uri)
+         img.save('qr_code.png')
+         
+         webbrowser.open_new_tab('localhost:8000/accounts/kintai')
+
+         # OneTimePasswordを表示
+         totp = pyotp.TOTP('base32secret3232')
+         print(totp.now())
          print('open')
-         #url = "https://amazon.co.jp"
-         #webbrowser.open(url)
-         #breakpoint()
-         return render(request, 'registration/koutuhi.html', context)
+         gmail_account = "j1409032@gmail.com"
+         gmail_password = "mamoka1212"
+         ## メールの送信先 --- (*2)
+         mail_to = email
+         subject = "2要素認証"
+         body = "添付ファイルのQRコードを読み取ってください"
+         encoding = 'utf-8'
+         msg = MIMEMultipart()
+         msg["Subject"] = Header(subject, encoding)
+         msg["To"] = mail_to
+         msg["From"] = gmail_account
+         msg.attach(MIMEText(body, 'plain', encoding))
+         
+         # ファイルを添付
+         path = "./qr_code.png"
+         with open(path, "rb") as f:
+            part = MIMEApplication(
+            f.read(),
+            Name=basename(path)
+            )
+ 
+         part['Content-Disposition'] = 'attachment; filename="%s"' % basename(path)
+         msg.attach(part)
+         
+         # Gmailに接続 --- (*6)
+         server = smtplib.SMTP_SSL("smtp.gmail.com", 465,
+         context=ssl.create_default_context())
+         server.login(gmail_account, gmail_password)
+         server.send_message(msg) # メールの送信
+         server.quit()
+         
+         root = tk.Tk()
+         root.withdraw()
+         
+         time.sleep(5)
+         inputdata = simpledialog.askstring("Input Box", "QRコードに表示される認証コードを入力してください",)
+         print("simpledialog",inputdata)
+         root.destroy()
+                  
+         
+         if(inputdata == totp.now()):
+            print('OK')
+            return render(request, 'registration/koutuhi.html', context)
+         else:
+            print('NG')
+            context = {
+              'error': '認証コードが違います',
+            }
+            return render(request, 'registration/login.html', context)
     context = {
               'error': 'ユーザーIDまたはパスワードが違います',
         }
     return render(request, 'registration/login.html', context)
-    
+
 def koutuhisubmit(request):
     template = loader.get_template('registration/koutuhi.html')
     list =  torihikisaki_list.objects.all()
@@ -178,8 +264,6 @@ def koutuhisubmit(request):
          syudan = request.POST.getlist('syudanlist', None)[i]
          transport = request.POST.getlist('transportlist', None)[i]
          seikyu = request.POST.getlist('seikyulist', None)[i]
-         print(range(len(request.POST.getlist('homonlist', None))))
-         print(i)
          startdatelist.append(startstr)
          enddatelist.append(endstr)
          homonlist.append(homon)
@@ -1473,32 +1557,38 @@ def kintaiload(request):
                       'user' : id,
                 }      
     return render(request, 'registration/kintai.html', context)
-    
-    
-
 
 class UserCreate(generic.CreateView):
-    """ユーザ登録"""
-    template_name = 'customLogin/user_create.html'
-    form_class = CustomUserCreateForm
-
-    def get(self, request, **kwargs):
+     
+     template_name = 'customLogin/user_create.html'
+     form_class = CustomUserCreateForm
+     def get(self, request, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect('/')
         return super().get(request, **kwargs)
 
-    def form_valid(self, form):
+     def form_valid(self, form):
         # 仮登録
         user = form.save(commit=False)
-        user.is_active = False
-        user.save()
+        #user.is_active = False
+        #user.save()
+        print("メール")
+        #account_sid = 'VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        #auth_token = 'TAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        #client = Client(account_sid, auth_token)
+        #verification = client.verify \
+        #             .services('VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX') \
+        #             .verifications \
+        #             .create(to='j1409032@yahoo.co.jp', channel='sms')
+        #print(verification.sid)
 
         # メール送信
         current_site = get_current_site(self.request)
         domain = current_site.domain
+        #breakpoint()
         context = {
             'protocol': 'https' if self.request.is_secure() else 'http',
-            'domain': domain,
+            'domain': '127.0.0.1:8000',
             'token': dumps(user.pk),
             'user': user
         }
@@ -1506,8 +1596,27 @@ class UserCreate(generic.CreateView):
         message_template = get_template('customLogin/mail/message.txt')
         subject = subject_template.render(context)
         message = message_template.render(context)
-        user.email_user(subject, message)
-        return redirect('customLogin:user_create_done')
+        #breakpoint()
+        gmail_account = "j1409032@gmail.com"
+        gmail_password = "mamoka1212"
+        # メールの送信先 --- (*2)
+        mail_to = "j1409032@yahoo.co.jp"        
+        encoding = 'utf-8'
+        msg = MIMEMultipart()
+        msg["Subject"] = Header(subject, encoding)
+        msg["To"] = mail_to
+        msg["From"] = gmail_account
+        msg.attach(MIMEText(message, 'plain', encoding))
+        
+        # Gmailに接続 --- (*6)
+        server = smtplib.SMTP_SSL("smtp.gmail.com", 465,
+        context=ssl.create_default_context())
+        server.login(gmail_account, gmail_password)
+        server.send_message(msg) # メールの送信
+        server.quit()
+
+        #user.email_user(subject, message)
+        return redirect('user_create_done')
         
         
         
@@ -1535,24 +1644,43 @@ class UserCreateComplete(generic.TemplateView):
 
         # tokenは問題なし
         try:
-            user = User.objects.get(pk=user_pk)
+            #user = User.objects.get(pk=user_pk)
+            user = request.session.get('User','')
         except User.DoenNotExist:
             return HttpResponseBadRequest()
 
-        if not user.is_active:
+        if not user:
             # 問題なければ本登録とする
-            user.is_active = True
-            user.is_staff = True
-            user.is_superuser = True
-            user.save()
+            #user.is_active = True
+            #user.is_staff = True
+            #user.is_superuser = True
+            #user.save()
 
             # QRコード生成
-            request.session["img"] = utils.get_image_b64(utils.get_auth_url(user.email, utils.get_secret(user)))
+            request.session["img"] = utils.get_image_b64(utils.get_auth_url('j1409032@gmail.com', utils.get_secret(user)))
 
             return super().get(request, **kwargs)
 
         return HttpResponseBadRequest()
 
+
+@login_required()
+@transaction.atomic
+def display_qrcode(request):
+    user_id = 'j1409032@yahoo.co.jp'
+    secret = get_secret()
+    
+#    try:
+#        two_auth = TwoAuth.objects.get(fk_user=request.user)
+#        two_auth.secret_key = secret
+#    except TwoAuth.DoesNotExist:
+#        two_auth = TwoAuth(fk_user=request.user, secret_key=secret)
+    
+    two_auth.save()
+
+    return JsonResponse({
+        'img':  get_image_b64(get_auth_url(user_id, secret)),
+    })
 
 class CustomLoginView(LoginView):
     """ログイン"""
@@ -1565,11 +1693,20 @@ class CustomLoginView(LoginView):
         return super().get(request, **kwargs)
 
 class UserCreateDone(generic.TemplateView):
-    """仮登録完了"""
+    print("仮登録")
+    template_name = 'customLogin/user_create_done.html'
     
     def get(self, request, **kwargs):
-        if request.user.is_authenticated:
-            breakpoint()
-            return HttpResponseRedirect('/')
-        return super().get(request, **kwargs)
+        #breakpoint()
+        #if request.user.is_authenticated:
+            
+       return HttpResponseRedirect('/')
+       # return super().get(request, **kwargs)
 
+class OTPAdmin(OTPAdminSite):
+    pass
+
+
+admin_site = OTPAdmin(name='OTPAdmin')
+admin_site.register(User)
+admin_site.register(TOTPDevice, TOTPDeviceAdmin)

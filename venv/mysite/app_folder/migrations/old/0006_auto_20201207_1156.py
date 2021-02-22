@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app_folder', '0005_auto_20201207_1026'),
+        ('app_folder', '0004_auto_20201211_2222'),
     ]
 
     operations = [

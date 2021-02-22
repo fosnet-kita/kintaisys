@@ -31,12 +31,24 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = [
+#allauthのあるなしにかかわらず、管理画面にユーザーネームでログインするのに必要
+    'django.contrib.auth.backends.Modelbackend',
+
+#allauthを使うときに必要
+    'django.account.auth_backends.AuthenticationBackend',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'django.contrib.staticfiles',
     'app_folder.apps.AppFolderConfig',
     'bootstrap4',
@@ -149,12 +161,25 @@ LOGIN_URL = 'two_factor:login'
 LOGIN_REDIRECT_URL = 'two_factor:koutuhi'
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
-#EMAIL_HOST = "smtp.gmail.com"
-#EMAIL_PORT = 587
+EMAIL_HOSTS = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'j1409032@gmail.com'
 EMAIL_HOST_PASSWORD = 'mamoka1212'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 TWO_FACTOR_PATCH_ADMIN = True
 TWO_FACTOR_CALL_GATEWAY = 'two_factor.gateways.fake.fake'
 TWO_FACTOR_SMS_GATEWAY = 'two_factor.gateways.fake.Fake'
+
+
+SITE_ID = 1
+SESSION_COOKIE_AGE = 60
+
+#ユーザ登録確認メールを送信
+#ACCOUNT_EMAIL_VARIFICATION = 'mandatory'
+#ACCOUNT_EMAIL_REQUIRED = True
+
+#コンソール上にユーザ登録確認メールを表示。ローカルで確認するため
+#EMAIL_BACKEND = 'django.core.backends.console.EmailBackend'

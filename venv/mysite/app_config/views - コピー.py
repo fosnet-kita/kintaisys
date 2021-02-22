@@ -5,34 +5,52 @@ from app_folder.models import project_work
 from app_folder.models import torihikisaki_list
 from app_folder.models import trans_info
 from app_folder.models import kintai_touroku_info
-from app_folder.models import project_uchiwake
 from django.db.models import Avg, Max, Min, Sum
 from django.template import loader
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
-from .forms import CustomUserCreateForm
-from django.views import generic
 #from xoxzo.cloudpy import XoxzoClient
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.signing import BadSignature, SignatureExpired, loads,dumps
+from django.http import HttpResponseBadRequest
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.views import generic
+from .forms import CustomUserCreateForm
+from django.contrib.auth.views import LoginView
+from django.template.loader import get_template
+from .forms import CustomLoginForm
+from . import utils
+from django_otp.admin import OTPAdminSite
+from django.contrib.auth.models import User
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django_otp.plugins.otp_totp.admin import TOTPDeviceAdmin
+from django.core.mail import send_mail
+import urllib.request
+
 import datetime
 import calendar
 import locale
 import os
 import secrets
 
-# Create your views here.
-import webbrowser
+import sys
+import smtplib
+from email.mime.text import MIMEText
+from email.utils import formatdate
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+from email import encoders
 
-
+User = get_user_model()
 
 def index(request):
     template = loader.get_template('index.html')
-    return HttpResponse(template.render( None, request))
-    
-
-    
-def kintai(request):
-    template = loader.get_template('registration/kintai.html')
-    
     return HttpResponse(template.render( None, request))
     
 def login(request):
@@ -47,8 +65,7 @@ def password(request):
     return HttpResponse(template.render( None, request))
     
 def passwordchange(request):
-    template = loader.get_template('registration/password_change.html')
-    
+    template = loader.get_template('registration/password_change.html')    
     id = request.POST.get('UserId','')
     passw =request.POST.get('Password','')
     passn =request.POST.get('APassword','')
@@ -73,10 +90,8 @@ def passwordchange(request):
       syaincd1=list[i].syaincd
       password1=list[i].password
       if (id != syaincd1 or passw != password1):
-        continue
-        
-      sameflg = True
-      
+        continue        
+      sameflg = True     
       if(passn == passk and passn != passw and len(passn) >= 8):
            p =  syain_info.objects.filter(syaincd = syaincd1)
            print(p)
@@ -108,17 +123,7 @@ def koutuhi(request):
     passw = request.POST['Pass']
     
     list =  syain_info.objects.all()
-    secret_key = secrets.randbelow(10000)
-    message = "こちらはXOXZOです。あなたの暗証番号は %04d です" % secret_key
 
-    # APIを呼び出すための秘密鍵は、環境変数に保存されているものとします
-    # SIDとTOKENは https://www.xoxzo.com/ からサインアップして入手してください
-    sid = os.getenv('XOXZO_API_SID')
-    auth_token = os.getenv('XOXZO_API_AUTH_TOKEN')
-
-    # SMSの送信
-    #xc = XoxzoClient(sid=sid, auth_token=auth_token)
-    #result = xc.send_sms(message=message, recipient="+818050213916", sender="XOXZO")
 
     for i in range(len(list)):
       syaincd=list[i].syaincd
@@ -128,10 +133,52 @@ def koutuhi(request):
       if (id == syaincd and passw == password):
          context = {
                    'cus': listtori,
-                   'syaincd':id,
+                   'user':id,
               }
-         url = 'http://127.0.0.1:8000/accounts/kintai/'
-         webbrowser.open(url,2)
+         print('open')
+         #url = "https://amazon.co.jp"
+         #webbrowser.open(url)
+         #breakpoint()
+         subject = 'Site Contact Form'
+         contact_message = "contact"
+         from_email = settings.EMAIL_HOST_USER
+         to_email = [from_email, 'j1409032@gmail.com']
+         send_mail(subject, contact_message, from_email, to_email, fail_silently=False)
+                  # メールデータ(MIME)の作成 --- (*4)
+         # 以下にGmailの設定を書き込む★ --- (*1)
+         #gmail_account = "j1409032@gmail.com"
+         #gmail_password = "mamoka1212"
+         ## メールの送信先 --- (*2)
+         #mail_to = "j1409032@yahoo.co.jp"
+         #subject = "添付ファイル送信テスト"
+         #body = "添付ファイルの送信テスト"
+         #encoding = 'utf-8'
+         #msg = MIMEMultipart()
+         #msg["Subject"] = Header(subject, encoding)
+         #msg["To"] = mail_to
+         #msg["From"] = gmail_account
+         #msg.attach(MIMEText(body, 'plain', encoding))
+         
+         # Gmailに接続 --- (*6)
+         #server = smtplib.SMTP_SSL("smtp.gmail.com", 465,
+         #context=ssl.create_default_context())
+         #server.login(gmail_account, gmail_password)
+         #server.send_message(msg) # メールの送信
+         #server.quit()
+
+         
+         
+         
+         
+         #ACCOUNT = "j1409032@gmail.com"
+         #PASSWORD = "mamoka1212"
+         #server = smtplib.SMTP_SSL("smtp.gmail.com", 465,context=ssl.create_default_context())
+         #server.login(ACCOUNT, PASSWORD)
+         #server.send_message("aaaaaaaa") # メールの送信   
+         #s.login(ACCOUNT, PASSWORD)
+         
+         #s.sendmail(ACCOUNT, "j1409032@yahoo.co.jp", "aaaaaaa")
+         
          return render(request, 'registration/koutuhi.html', context)
     context = {
               'error': 'ユーザーIDまたはパスワードが違います',
@@ -144,8 +191,7 @@ def koutuhisubmit(request):
     ida = request.session.get('User','')
     name = syain_info.objects.get(syaincd=ida).syainname
     torihiki = request.POST.get('torihiki', '')
-    print(name)
-    print(torihiki)
+
     if request.method == 'POST':
       tourokuno = request.POST.get('tourokuno', '')
       kbn = request.POST['tourokukbn']
@@ -182,14 +228,7 @@ def koutuhisubmit(request):
          syudanlist.append(syudan)
          transportlist.append(transport)
          seikyulist.append(seikyu)
-         print(name)
-         print(startdatelist)
-         print(enddatelist)
-         print(homonlist)
-         print(kamokulist)
-         print(syudanlist)
-         print(transportlist)
-         print(seikyulist)
+
          tourokuid = '10' + str(trans_info.objects.count())
 
          
@@ -200,10 +239,15 @@ def koutuhisubmit(request):
          if (kbn == '修正'):
             print('update')
             b = trans_info.objects.filter(tourokuno = str(tourokuno))
-            b.update(tourokukbn = kbn,tourokudate = date,homon = homonlist[i],tourokuno = tourokuid, startdate = startdatelist[i], enddate = startdatelist[i],kamoku = kamokulist[i], syudan = syudanlist[i],transport = transportlist[i], k_seikyu = seikyulist[0], seisan_kbn = seisan)
+            b.update(tourokukbn = kbn,tourokudate = date,customname = torihiki,homon = homonlist[i],tourokuno = tourokuid,
+             startdate = startdatelist[i], enddate = startdatelist[i],kamoku = kamokulist[i], 
+             syudan = syudanlist[i],transport = transportlist[i], k_seikyu = seikyulist[0], seisan_kbn = seisan)
          if (kbn == '登録'):
             print('set')
-            b = trans_info(syaincd = ida,syainname = name,tourokukbn = kbn,customname = torihiki, tourokudate = date,homon = homonlist[i],tourokuno = tourokuid, startdate = startdatelist[i], enddate = startdatelist[i],kamoku = kamokulist[i], syudan = syudanlist[i],transport = transportlist[i], k_seikyu = seikyulist[0], seisan_kbn = seisan)
+            b = trans_info(syaincd = ida,syainname = name,tourokukbn = kbn,customname = torihiki, tourokudate = date,
+            homon = homonlist[i],tourokuno = tourokuid, startdate = startdatelist[i], enddate = startdatelist[i],
+            kamoku = kamokulist[i], syudan = syudanlist[i],transport = transportlist[i], k_seikyu = seikyulist[0], 
+            seisan_kbn = seisan)
             b.save()
     cus = {
                'cus': list,
@@ -296,7 +340,6 @@ def output2(request):
               listf[i].todoke_tikoku = str(listf[i].todoke_tikoku)
               listf[i].todoke_tikoku = "遅刻"
               kanmaflg = True
-           print(kanmaflg)
            if (listf[i].todoke_soutai  == 1):
               listf[i].todoke_soutai = str(listf[i].todoke_soutai)
               if kanmaflg:
@@ -358,39 +401,14 @@ def output2(request):
     }
     return render(request, 'registration/output_ichiran.html', context)
     
-    
-#ログイン画面→勤怠入力画面
-def kintailogin(request):
-    template = loader.get_template('registration/kintai.html')
-    id = request.session.get('User','')
-    passw =request.session.get('Pass','')
-   
-    list =  syain_info.objects.all()
-    today = datetime.datetime.now().strftime('%Y-%m-%d')
-    print(passw)
-    print(id)
-    for i in range(len(list)):
-      syaincd=list[i].syaincd
-      password=list[i].password
-      print(list[i].syaincd)
-      print(list[i].password)
-      if (id == syaincd and passw == password):
-         context = {
-                   'syaincd':id,
-              }
-         return render(request, 'registration/kintai.html', context)
-    context = {
-              'error': 'ユーザーIDまたはパスワードが違います',
-        }
-    return render(request, 'registration/login.html', context)
-
-
 
 def project(request):
     template = loader.get_template('registration/projecttouroku.html')
     list =  project_work.objects.all().distinct('projectname')
-    
-    print("absproject "   + request.POST.get('absproject', ''))
+    projectselect1 =  request.session.get('project1', '')
+    projectselect2 =  request.session.get('project2', '')
+    projectselect3 =  request.session.get('project3', '')
+    projectselect4 =  request.session.get('project4', '')
     request.session['abs'] = request.POST.get('absproject', '')
     request.session['chikoku'] = request.POST.get('chikokuproject', '')
     request.session['hayade'] = request.POST.get('hayadeproject', '')
@@ -400,12 +418,15 @@ def project(request):
     request.session['holiday'] = request.POST.get('holidayproject', '')
     request.session['holidaykbn'] = request.POST.get('holidaykbnproject', '')
     request.session['riyu'] = request.POST.get('riyuproject', '')
-    print(request.session.get('chikoku',''))
     request.session['starttime'] = request.POST.get('starttime', '')
     request.session['endtime'] = request.POST.get('endtime', '')
     request.session['overtime'] = request.POST.get('overtime', '')
     cont = {
         'pro': list,
+        'projectselect1': projectselect1,
+        'projectselect2': projectselect2,
+        'projectselect3': projectselect3,
+        'projectselect4': projectselect4,
     }
     return render(request, 'registration/projecttouroku.html', context=cont)
     
@@ -526,8 +547,8 @@ def kintaiproject(request):
     todo3 = request.session.get('hensoku','')
     todo4 = request.session.get('midnight','')
     todo5 = request.session.get('holiday','')
-     
-    print("abs" + abs)
+    ida = request.session.get('User','')
+    
     value = project_work.objects.all().distinct('workname')
     value1 = project_work.objects.filter(projectname=request.POST['touroku1']).distinct('kouteiname')
     value2 = project_work.objects.filter(projectname=request.POST['touroku2']).distinct('kouteiname')
@@ -538,7 +559,7 @@ def kintaiproject(request):
     touroku2 = request.POST['touroku2']
     touroku3 = request.POST['touroku3']
     touroku4 = request.POST['touroku4']
-
+    print("touroku1 " + touroku1)
     request.session['touroku1'] = request.POST['touroku1']
     request.session['touroku2'] = request.POST['touroku2']
     request.session['touroku3'] = request.POST['touroku3']
@@ -565,58 +586,30 @@ def kintaiproject(request):
                 'midnight': todo4,
                 'holiday' : todo5,
                 'holidaykbn': hol,
-                'riyu' : riyu,  
+                'riyu' : riyu,
+                'user' : ida,
           }
       return render(request, 'registration/kintai.html', context)
     return HttpResponse(template.render( None, request))
-
-
-
-def kintaiwork(request):
-    template = loader.get_template('registration/kintai.html')
-    t1 = request.session.get('touroku1','')
-    #t1 = request.POST['touroku1']
-    #t2 = request.session.get('touroku2','')
-    t222 = request.session.get('touroku13','')
-    k1 = request.session.get('kouteiname1','')
-    koutei = request.POST.get('kouteiname1', '')
-    print("t1"+  request.POST['kouteiname1']  + " aa " + t1)
-    #value = ('kouteiname','workname')
-    value1 = project_work.objects.filter(projectname=t1).distinct('kouteiname')
-    value22 = project_work.objects.filter(projectname=t1,kouteiname=koutei)
-    #value = project_work.objects.all()
-    #value1 = project_work.objects.filter(projectname=t1).distinct('kouteiname')
-    #value2 = project_work.objects.filter(projectname=t2).distinct('kouteiname')
-    context = {
-                'projectname1': t1,
-    #            'projectname2': t2,
-                'koutei1': value1,
-    #            'koutei2': value2,
-                'gyomu1': value22,
-                #'gyomu2': value,
-         }
-    #return render(request, 'registration/kintai.html', context)
     
 #勤怠登録押下、工程選択時    
 def kintaitouroku(request):
     template = loader.get_template('registration/kintai.html')
     btt = request.POST.get('btnExecH','')
-    start = request.POST.get('starttime','00:00')
-    end = request.POST.get('endtime','00:00')
-   
     abs  = request.POST.get('abs','')
-    timestr = request.session.get('dateselect','2021-01-01')
-    print(start)
-    print(end)
+    nowyear = str(datetime.date.today().year)
+    nowmonth = str(format(datetime.date.today().month,'02'))
+    nowday = str(format(datetime.date.today().day,'02'))
+    nowdate = nowyear + "-" +  nowmonth +  "-" + nowday
+    timestr = request.POST.get('dateselect',nowdate)
+    
     ida = request.session.get('User','')
     listf = kintai_touroku_info.objects.filter(ymd = timestr,syaincd = ida)
     errflg = False
-    context = {}
-    
-    syainname =  syain_info.objects.all()
-    
-    start = request.POST.get('starttime', '00:00')
-    end = request.POST.get('endtime', '00:00')
+    context = {}   
+    syainname =  syain_info.objects.all()   
+    start = request.POST.get('starttime', '')
+    end = request.POST.get('endtime', '')
     over = request.POST.get('overtime', '')
 
     tourokuope = request.POST.get('tourokuope','')
@@ -624,7 +617,11 @@ def kintaitouroku(request):
         t1 = request.POST.get('project1','')
         t2 = request.POST.get('project2','')
         t3 = request.POST.get('project3','')
-        t4 = request.POST.get('project4','')    
+        t4 = request.POST.get('project4','')
+        request.session['project1'] = request.POST.get('project1','')
+        request.session['project2'] = request.POST.get('project2','')
+        request.session['project3'] = request.POST.get('project3','')
+        request.session['project4'] = request.POST.get('project4','')
     else:
         t1 = request.POST.get('projectname1','')
         t2 = request.POST.get('projectname2','')
@@ -672,25 +669,21 @@ def kintaitouroku(request):
         kouteicd1 = kcd1[0].kouteicd
     else:
         kouteicd1 = ""
-    print("kouteicd1" + kouteicd1)
     
     if (len(kcd2) != 0):
         kouteicd2 = kcd2[0].kouteicd
     else:
         kouteicd2 = ""
-    print("kouteicd2" + kouteicd2)
     
     if (len(kcd3) != 0):
         kouteicd3 = kcd3[0].kouteicd
     else:
         kouteicd3 = ""
-    print("kouteicd3" + kouteicd3)
     
     if (len(kcd4) != 0):
         kouteicd4 = kcd4[0].kouteicd
     else:
         kouteicd4 = ""
-    print("kouteicd4" + kouteicd4)
     
     gyomuselect1 = request.POST.get('workname1','')
     gyomuselect2 = request.POST.get('workname2','')
@@ -770,6 +763,7 @@ def kintaitouroku(request):
                         'holiday' : todo5,
                         'holidaykbn': hol,
                         'riyu' : riyu,  
+                        'user' : ida,
                       }
             return render(request, 'registration/kintai.html', context)
 
@@ -823,11 +817,11 @@ def kintaitouroku(request):
                     'holiday' : todo5,
                     'holidaykbn': hol,
                     'riyu' : riyu,  
+                    'user' : ida,
              }
         return render(request, 'registration/kintai.html', context)
 
     name = syain_info.objects.get(syaincd=ida).syainname
-    print(name)
     worktime = 0.0
     rest = 0.0
     holdb = 0
@@ -854,24 +848,24 @@ def kintaitouroku(request):
         absdb = 0
     if(abs == '欠勤'):
         absdb = 1
+        
+
 
     if(abs == '出勤' or abs == ''):
-        
-        if(t1 == '' and t2 == '' and t3 == '' and t4 == ''):
-            context.update({
-                  'projecterror': 'プロジェクト登録をしてください',
-                  'ymd': timestr,
-                  'abs': abs,
-                  'holidaykbn': hol,
-                  'riyu' : riyu,
-                  'chikoku' : todo0,
-                  'hayade'  : todo1,
-                  'soutai'  : todo2,
-                  'hensoku' : todo3,
-                  'midnight': todo4,
-                  'holiday' : todo5,
-            })
-            errflg = True
+    
+        if (resttime1 == ''):
+            resttime1 = 0
+        if (resttime2 == ''):
+            resttime2 = 0
+        if (resttime3 == ''):
+            resttime3 = 0
+        if (resttime4 == ''):
+            resttime4 = 0
+        resttime = float(resttime1) +  float(resttime2) +  float(resttime3) + float(resttime4)
+        midtime = 0
+        midover = 0
+        paidtime = 0
+        morningtime = 0
         
         if( abs == '' ):
             context.update({
@@ -921,9 +915,29 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
 
             })
+            print('abserror')
             errflg = True
+
+        if(t1 == '' and t2 == '' and t3 == '' and t4 == ''):
+            context.update({
+                  'projecterror': 'プロジェクト登録をしてください',
+                  'ymd': timestr,
+                  'abs': abs,
+                  'holidaykbn': hol,
+                  'riyu' : riyu,
+                  'chikoku' : todo0,
+                  'hayade'  : todo1,
+                  'soutai'  : todo2,
+                  'hensoku' : todo3,
+                  'midnight': todo4,
+                  'holiday' : todo5,
+                  'user' : ida,
+            })
+            errflg = True
+        
         if( (t1 != '' and starttime1 == '')  or (t2 != '' and starttime2 == '') or (t3 != '' and starttime3 == '') or (t4 != '' and starttime4 == '') ):
             context.update({
                   'starterror': '開始時刻が入力されていません',
@@ -972,7 +986,9 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
             })
+            print('starterror')
             errflg = True
         if( (t1 != '' and endtime1 == '')  or (t2 != '' and endtime2 == '') or (t3 != '' and endtime3 == '') or (t4 != '' and endtime4 == '')  ):
             context.update({
@@ -1022,59 +1038,11 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
             })
+            print('enderror')
             errflg = True
-        if( (t1 != '' and resttime1 == '')  or (t2 != '' and resttime2 == '') or (t3 != '' and resttime3 == '') or (t4 != '' and resttime4 == '')  ):
-            context.update({
-                  'resterror': '休憩時間が入力されていません',
-                  'starttime': start,
-                  'endtime': end,
-                  'overtime': over,
-                  'projectname1': t1,
-                  'projectname2': t2,
-                  'projectname3': t3,
-                  'projectname4': t4,
-                  'starttime1': request.POST.get('starttime1',''),
-                  'starttime2': request.POST.get('starttime2',''),
-                  'starttime3': request.POST.get('starttime3',''),
-                  'starttime4': request.POST.get('starttime4',''),
-                  'endtime1': request.POST.get('endtime1',''),
-                  'endtime2': request.POST.get('endtime2',''),
-                  'endtime3': request.POST.get('endtime3',''),
-                  'endtime4': request.POST.get('endtime4',''),
-                  'resttime1': request.POST.get('resttime1',''),
-                  'resttime2': request.POST.get('resttime2',''),
-                  'resttime3': request.POST.get('resttime3',''),
-                  'resttime4': request.POST.get('resttime4',''),
-                  'koutei1': value1,
-                  'koutei2': value2,
-                  'koutei3': value3,
-                  'koutei4': value4,
-                  'kouteiselect1': koutei1,
-                  'kouteiselect2': koutei2,
-                  'kouteiselect3': koutei3,
-                  'kouteiselect4': koutei4,
-                  'gyomu1': gyomu1,
-                  'gyomu2': gyomu2,
-                  'gyomu3': gyomu3,
-                  'gyomu4': gyomu4,
-                  'gyomuselect1': gyomuselect1,
-                  'gyomuselect2': gyomuselect2,
-                  'gyomuselect3': gyomuselect3,
-                  'gyomuselect4': gyomuselect4,
-                  'abs': abs,
-                  'holidaykbn': hol,
-                  'riyu' : riyu,
-                  'chikoku' : todo0,
-                  'hayade'  : todo1,
-                  'soutai'  : todo2,
-                  'hensoku' : todo3,
-                  'midnight': todo4,
-                  'holiday' : todo5,
-                  'ymd': timestr,
-            })
-            errflg = True
-            
+        
 
         if( (t1 != '' and koutei1 == '')  or (t2 != '' and koutei2 == '') or (t3 != '' and koutei3 == '') or (t4 != '' and koutei4 == '')):
             context.update({
@@ -1124,6 +1092,7 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
 
             })
             errflg = True
@@ -1175,8 +1144,10 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
 
             })
+            print('workerror')
             errflg = True
         if( timestr == ''):
             context.update({
@@ -1222,6 +1193,7 @@ def kintaitouroku(request):
                   'midnight': todo4,
                   'holiday' : todo5,
                   'ymd': timestr,
+                  'user' : ida,
 
             })
             errflg = True
@@ -1259,86 +1231,56 @@ def kintaitouroku(request):
             todok = 1
         if errflg:
            return render(request, 'registration/kintai.html', context)
+        
         startn = start.split(':')
         endn = end.split(':')
         starth = int(startn[0])
         endh = int(endn[0])
-
+        if(starth >= endh):
+            endh = endh + 24
         startm = int(startn[1])
         endm = int(endn[1])
         min = endm - startm
         min = min / 60
+        
         worktime = endh - starth + min - float(resttime)
         worktime = round(worktime,2)
+        if (worktime < 7.5):
+            paidtime = math.ceil(7.5 - worktime)
+        
+        if (starth <= 8 and starth >= 5 and (endh >= 9 or endh <= 4)):
+            morningtime = 9 - starth - startm / 60
+        if(starth <= 8 and starth >= 5 and (endh < 9 or endh > 4)):
+            morningtime = worktime
+        
         if(startm >  endm):
             worktime = worktime - 1
-        if (resttime1 == ''):
-            resttime1 = 0
-        if (resttime2 == ''):
-            resttime2 = 0
-        if (resttime3 == ''):
-            resttime3 = 0
-        if (resttime4 == ''):
-            resttime4 = 0
-        resttime = float(resttime1) +  float(resttime2) +  float(resttime3) + float(resttime4)
-
-
-        #DB格納(出勤)
-        b = kintai_touroku_info(syaincd=ida,syainname = name, 
-        ymd=timestr,starttime=start,endtime=end,worktime=worktime,overtime=over,
-        resttime=resttime, attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
-        todoke_tikoku=todo0db, todoke_soutai=todo1db, todoke_midnight=todo2db, todoke_hayade=todo3db, 
-        todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,
-        projectname1 = t1,kouteiname1 = koutei1, workname1 = gyomuselect1, start1 = starttime1, end1 = endtime1, rest1 = resttime1,
-        projectname2 = t2,kouteiname2 = koutei2, workname2 = gyomuselect2, start2 = starttime2, end2 = endtime2, rest2 = resttime2,
-        projectname3 = t3,kouteiname3 = koutei3, workname3 = gyomuselect3, start3 = starttime3, end3 = endtime3, rest3 = resttime3,
-        projectname4 = t4,kouteiname4 = koutei4, workname4 = gyomuselect4, start4 = starttime4, end4 = endtime4, rest4 = resttime4,
-        projectcd1 = projectcd1,projectcd2 = projectcd2,projectcd3 = projectcd3,projectcd4 = projectcd4,
-        kouteicd1 = kouteicd1,kouteicd2 = kouteicd2,kouteicd3 = kouteicd3,kouteicd4 = kouteicd4,
-        workcd1 = workcd1,workcd2 = workcd2,workcd3 = workcd3,workcd4 = workcd4)
-    #DB格納(欠勤)
-    else:
-        print('kekkin')
-        start = '00:00'
-        end = '00:00'
-        worktime= 0.0
-        over = 0.0
-        b = kintai_touroku_info(syaincd=ida,syainname = name, 
-        ymd=timestr, starttime=start,endtime=end,worktime=worktime,overtime=over,attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
-        start1 = starttime1, end1 = endtime1,
-        start2 = starttime2, end2 = endtime2,
-        start3 = starttime3, end3 = endtime3,
-        start4 = starttime4, end4 = endtime4,
-        todokekbn=todok)
-
-    listf = kintai_touroku_info.objects.filter(ymd = timestr)
-    
-   
-    if (len(listf) == 0):
-       b.save()
-    else:
-       print('update')
-       b =  kintai_touroku_info.objects.filter(ymd = timestr)
-       b.update(starttime=start,endtime=end,worktime=worktime,overtime=over,
-       resttime=resttime,attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
-       todoke_tikoku=todo0db, todoke_soutai=todo1db, todoke_midnight=todo2db, todoke_hayade=todo3db, 
-       todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,
-       projectname1 = t1,kouteiname1 = koutei1, workname1 = gyomuselect1, start1 = starttime1, end1 = endtime1, rest1 = resttime1,
-       projectname2 = t2,kouteiname2 = koutei2, workname2 = gyomuselect2, start2 = starttime2, end2 = endtime2, rest2 = resttime2,
-       projectname3 = t3,kouteiname3 = koutei3, workname3 = gyomuselect3, start3 = starttime3, end3 = endtime3, rest3 = resttime3,
-       projectname4 = t4,kouteiname4 = koutei4, workname4 = gyomuselect4, start4 = starttime4, end4 = endtime4, rest4 = resttime4,
-       projectcd1 = projectcd1,projectcd2 = projectcd2,projectcd3 = projectcd3,projectcd4 = projectcd4,
-       kouteicd1 = kouteicd1,kouteicd2 = kouteicd2,kouteicd3 = kouteicd3,kouteicd4 = kouteicd4,
-       workcd1 = workcd1,workcd2 = workcd2,workcd3 = workcd3,workcd4 = workcd4)
-     
-    context = {
-                  'message': '勤怠登録しました',
-                  'starttime':start,
+        if (endh >= 22 or endh <= 5 or starth  >= 22 or starth <= 5):
+        
+            if (starth < 22 and starth > 5):
+                if (endh >= 22):
+                    midtime = endh - 22 + endm / 60
+                if (endh <= 5):
+                    midtime = endh + 2 + endm / 60
+            else:
+                if (starth >= 22 or starth <= 5):
+                    if ( endh <= 5 and starth < 22):
+                        midtime = endh - starth + min
+                    if ( endh <= 5 and starth >= 22):
+                        midtime = endh + 24 - starth - min
+                    if ( end > 5 and  start < 22):
+                        midtime = 5 - starth - min
+                    if ( end > 5 and start >= 22):
+                        midtime = 24 - starth + 4 - startm / 60
+            if (worktime > 7.5):
+                    midover = midtime
+                    
+            if (todo4 == ''):
+                context.update({
+                  'miderror': '深夜有が選択されていません',
+                  'starttime': start,
                   'endtime': end,
-                  'worktime': worktime,
                   'overtime': over,
-                  'resttime': resttime,
-                  'ymd': timestr,
                   'projectname1': t1,
                   'projectname2': t2,
                   'projectname3': t3,
@@ -1380,6 +1322,77 @@ def kintaitouroku(request):
                   'hensoku' : todo3,
                   'midnight': todo4,
                   'holiday' : todo5,
+                  'ymd': timestr,
+                  'user' : ida,
+                })
+                return render(request, 'registration/kintai.html', context)
+
+
+        
+        #DB格納(出勤)
+        b = kintai_touroku_info(syaincd=ida,syainname = name, 
+        ymd=timestr,starttime=start,endtime=end,worktime=worktime,overtime=over,
+        resttime=resttime, attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
+        todoke_tikoku=todo0db, todoke_soutai=todo1db, todoke_midnight=todo2db, todoke_hayade=todo3db, 
+        todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,mntime = midtime,mnovertime = midover,
+        paidtime = paidtime,
+        projectname1 = t1,kouteiname1 = koutei1, workname1 = gyomuselect1, start1 = starttime1, end1 = endtime1, rest1 = resttime1,
+        projectname2 = t2,kouteiname2 = koutei2, workname2 = gyomuselect2, start2 = starttime2, end2 = endtime2, rest2 = resttime2,
+        projectname3 = t3,kouteiname3 = koutei3, workname3 = gyomuselect3, start3 = starttime3, end3 = endtime3, rest3 = resttime3,
+        projectname4 = t4,kouteiname4 = koutei4, workname4 = gyomuselect4, start4 = starttime4, end4 = endtime4, rest4 = resttime4,
+        projectcd1 = projectcd1,projectcd2 = projectcd2,projectcd3 = projectcd3,projectcd4 = projectcd4,
+        kouteicd1 = kouteicd1,kouteicd2 = kouteicd2,kouteicd3 = kouteicd3,kouteicd4 = kouteicd4,
+        workcd1 = workcd1,workcd2 = workcd2,workcd3 = workcd3,workcd4 = workcd4)
+    #DB格納(欠勤)
+    else:
+        start = '00:00'
+        end = '00:00'
+        worktime= 0.0
+        over = 0.0
+        b = kintai_touroku_info(syaincd=ida,syainname = name, 
+        ymd=timestr, starttime=start,endtime=end,worktime=worktime,overtime=over,attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
+        start1 = starttime1, end1 = endtime1,
+        start2 = starttime2, end2 = endtime2,
+        start3 = starttime3, end3 = endtime3,
+        start4 = starttime4, end4 = endtime4,
+        todokekbn=todok)
+
+    listf = kintai_touroku_info.objects.filter(ymd = timestr)
+    
+   
+    if (len(listf) == 0):
+       b.save()
+    else:
+       b =  kintai_touroku_info.objects.filter(ymd = timestr)
+       b.update(starttime=start,endtime=end,worktime=worktime,overtime=over,
+       resttime=resttime,attkbn=absdb, holidaykbn=holdb, holidayriyu=riyu,
+       todoke_tikoku=todo0db, todoke_soutai=todo1db, todoke_midnight=todo2db, todoke_hayade=todo3db, 
+       todoke_irregular=todo4db, todoke_holiwork=todo5db, todokekbn=todok,
+       projectname1 = t1,kouteiname1 = koutei1, workname1 = gyomuselect1, start1 = starttime1, end1 = endtime1, rest1 = resttime1,
+       projectname2 = t2,kouteiname2 = koutei2, workname2 = gyomuselect2, start2 = starttime2, end2 = endtime2, rest2 = resttime2,
+       projectname3 = t3,kouteiname3 = koutei3, workname3 = gyomuselect3, start3 = starttime3, end3 = endtime3, rest3 = resttime3,
+       projectname4 = t4,kouteiname4 = koutei4, workname4 = gyomuselect4, start4 = starttime4, end4 = endtime4, rest4 = resttime4,
+       projectcd1 = projectcd1,projectcd2 = projectcd2,projectcd3 = projectcd3,projectcd4 = projectcd4,
+       kouteicd1 = kouteicd1,kouteicd2 = kouteicd2,kouteicd3 = kouteicd3,kouteicd4 = kouteicd4,
+       workcd1 = workcd1,workcd2 = workcd2,workcd3 = workcd3,workcd4 = workcd4)
+     
+    context = {
+                  'message': '勤怠登録しました',
+                  'starttime':start, 'endtime': end,'worktime': worktime,'overtime': over,'resttime': resttime,
+                  'ymd': timestr,'projectname1': t1,'projectname2': t2,'projectname3': t3,'projectname4': t4,
+                  'starttime1': request.POST.get('starttime1',''),'starttime2': request.POST.get('starttime2',''),
+                  'starttime3': request.POST.get('starttime3',''),'starttime4': request.POST.get('starttime4',''),
+                  'endtime1': request.POST.get('endtime1',''),'endtime2': request.POST.get('endtime2',''),
+                  'endtime3': request.POST.get('endtime3',''),'endtime4': request.POST.get('endtime4',''),
+                  'resttime1': request.POST.get('resttime1',''), 'resttime2': request.POST.get('resttime2',''),
+                  'resttime3': request.POST.get('resttime3',''), 'resttime4': request.POST.get('resttime4',''),
+                  'koutei1': value1,'koutei2': value2, 'koutei3': value3,'koutei4': value4,
+                  'kouteiselect1': koutei1,'kouteiselect2': koutei2, 'kouteiselect3': koutei3, 'kouteiselect4': koutei4,
+                  'gyomu1': gyomu1,'gyomu2': gyomu2,'gyomu3': gyomu3, 'gyomu4': gyomu4,
+                  'gyomuselect1': gyomuselect1,'gyomuselect2': gyomuselect2,'gyomuselect3': gyomuselect3,'gyomuselect4': gyomuselect4,
+                  'abs': abs, 'holidaykbn': hol, 'riyu' : riyu,
+                  'chikoku' : todo0,'hayade'  : todo1,'soutai'  : todo2,'hensoku' : todo3,'midnight': todo4, 'holiday' : todo5,
+                  'user' : ida,
 
             }
     return render(request, 'registration/kintai.html', context)
@@ -1388,12 +1401,14 @@ def kintaitouroku(request):
 #勤怠入力画面ロード   
 def kintaiload(request):
     template = loader.get_template('registration/kintai.html')
-    monthyear =request.POST.get('dateselect')
-    request.session['dateselect'] = request.POST.get('dateselect')
     id = request.session.get('User','')
-    print(monthyear)
+    nowyear = str(datetime.date.today().year)
+    nowmonth = str(format(datetime.date.today().month,'02'))
+    nowday = str(format(datetime.date.today().day,'02'))
+    nowdate = nowyear + "-" +  nowmonth +  "-" + nowday
+    monthyear = request.POST.get('dateselect',nowdate)
+
     listf = kintai_touroku_info.objects.filter(ymd = monthyear, syaincd = id)
-    print(len(listf))
     if (len(listf) == 1):
 
         attkbn = listf[0].attkbn
@@ -1425,8 +1440,6 @@ def kintaiload(request):
         todo3 = listf[0].todoke_hayade
         todo4 = listf[0].todoke_irregular
         todo5 = listf[0].todoke_holiwork
-        print(start2)
-        print(end2)
         koutei1 = project_work.objects.filter(projectname=listf[0].projectname1).distinct('kouteiname')
         koutei2 = project_work.objects.filter(projectname=listf[0].projectname2).distinct('kouteiname')
         koutei3 = project_work.objects.filter(projectname=listf[0].projectname3).distinct('kouteiname')
@@ -1477,56 +1490,136 @@ def kintaiload(request):
         else:
             todo5 = ''
         context = {
-                      'starttime':start,
-                      'endtime': end,
-                      'worktime': listf[0].worktime,
-                      'overtime': listf[0].overtime,
-                      'resttime': listf[0].resttime,
-                      'ymd':      monthyear,
-                      'projectname1':listf[0].projectname1,
-                      'projectname2':listf[0].projectname2,
-                      'projectname3':listf[0].projectname3,
-                      'projectname4':listf[0].projectname4,
-                      'koutei1': koutei1,
-                      'koutei2': koutei2,
-                      'koutei3': koutei3,
-                      'koutei4': koutei4,
-                      'kouteiselect1': listf[0].kouteiname1,
-                      'kouteiselect2': listf[0].kouteiname2,
-                      'kouteiselect3': listf[0].kouteiname3,
-                      'kouteiselect4': listf[0].kouteiname4,
-                      'gyomu1':   gyomu1,
-                      'gyomu2':   gyomu2,
-                      'gyomu3':   gyomu3,
-                      'gyomu4':   gyomu4,
-                      'gyomuselect1': listf[0].workname1,
-                      'gyomuselect2': listf[0].workname2,
-                      'gyomuselect3': listf[0].workname3,
-                      'gyomuselect4': listf[0].workname4,
-                      'starttime1':start1,
-                      'endtime1': end1,
-                      'resttime1':   listf[0].rest1,
-                      'starttime2':start2,
-                      'endtime2': end2,
-                      'resttime2':   listf[0].rest2,
-                      'starttime3':start3,
-                      'endtime3': end3,
-                      'resttime3':   listf[0].rest3,
-                      'starttime4':start4,
-                      'endtime4': end4,
-                      'resttime4':   listf[0].rest4,
-                      'holidaykbn': holidaykbn,
-                      'abs': attkbn,
-                      'riyu': holidayriyu,
-                      'chikoku': todo0,
-                      'hayade': todo1,
-                      'soutai': todo2,
-                      'hensoku': todo3,
-                      'midnight': todo4,
-                      'holiday': todo5,
+                      'starttime':start, 'endtime': end,
+                      'worktime': listf[0].worktime,'overtime': listf[0].overtime,
+                      'resttime': listf[0].resttime,'ymd':      monthyear,
+                      'projectname1':listf[0].projectname1, 'projectname2':listf[0].projectname2,
+                      'projectname3':listf[0].projectname3, 'projectname4':listf[0].projectname4,
+                      'koutei1': koutei1, 'koutei2': koutei2,'koutei3': koutei3,'koutei4': koutei4,
+                      'kouteiselect1': listf[0].kouteiname1, 'kouteiselect2': listf[0].kouteiname2,'kouteiselect3': listf[0].kouteiname3, 'kouteiselect4': listf[0].kouteiname4,
+                      'gyomu1':   gyomu1,'gyomu2':   gyomu2, 'gyomu3':   gyomu3, 'gyomu4':   gyomu4,
+                      'gyomuselect1': listf[0].workname1, 'gyomuselect2': listf[0].workname2,
+                      'gyomuselect3': listf[0].workname3, 'gyomuselect4': listf[0].workname4,
+                      'starttime1':start1, 'endtime1': end1, 'resttime1':   listf[0].rest1,
+                      'starttime2':start2,'endtime2': end2,  'resttime2':   listf[0].rest2,
+                      'starttime3':start3,'endtime3': end3,  'resttime3':   listf[0].rest3,
+                      'starttime4':start4,'endtime4': end4,  'resttime4':   listf[0].rest4,
+                      'holidaykbn': holidaykbn, 'abs': attkbn,  'riyu': holidayriyu,
+                      'chikoku': todo0, 'hayade': todo1,'soutai': todo2, 'hensoku': todo3, 'midnight': todo4, 'holiday': todo5,
+                      'user' : id,
                 }      
         return render(request, 'registration/kintai.html', context)
     context = {
                       'ymd':      monthyear,
+                      'user' : id,
                 }      
     return render(request, 'registration/kintai.html', context)
+    
+    
+
+
+class UserCreate(generic.CreateView):
+     print("ユーザ登録")
+     template_name = 'customLogin/user_create.html'
+     form_class = CustomUserCreateForm
+     def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        return super().get(request, **kwargs)
+
+     def form_valid(self, form):
+        # 仮登録
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+
+        # メール送信
+        current_site = get_current_site(self.request)
+        domain = current_site.domain
+        context = {
+            'protocol': 'https' if self.request.is_secure() else 'http',
+            'domain': domain,
+            'token': dumps(user.pk),
+            'user': user
+        }
+        subject_template = get_template('customLogin/mail/subject.txt')
+        message_template = get_template('customLogin/mail/message.txt')
+        subject = subject_template.render(context)
+        message = message_template.render(context)
+        #breakpoint()
+        user.email_user(subject, message)
+        return redirect('user_create_done')
+        
+        
+        
+class UserCreateComplete(generic.TemplateView):
+    """本登録完了"""
+    template_name = 'customLogin/user_create_complete.html'
+    timeout_seconds = getattr(settings, 'ACTIVATION_TIMEOUT_SECONDS', 60 * 60 * 24)  # デフォルトでは1日以内
+
+    def get(self, request, **kwargs):
+        """tokenが正しければ本登録."""
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+
+        token = kwargs.get('token')
+        try:
+            user_pk = loads(token, max_age=self.timeout_seconds)
+
+        # 期限切れ
+        except SignatureExpired:
+            return HttpResponseBadRequest()
+
+        # tokenが間違っている
+        except BadSignature:
+            return HttpResponseBadRequest()
+
+        # tokenは問題なし
+        try:
+            user = User.objects.get(pk=user_pk)
+        except User.DoenNotExist:
+            return HttpResponseBadRequest()
+
+        if not user.is_active:
+            # 問題なければ本登録とする
+            user.is_active = True
+            user.is_staff = True
+            user.is_superuser = True
+            user.save()
+
+            # QRコード生成
+            request.session["img"] = utils.get_image_b64(utils.get_auth_url(user.email, utils.get_secret(user)))
+
+            return super().get(request, **kwargs)
+
+        return HttpResponseBadRequest()
+
+
+class CustomLoginView(LoginView):
+    """ログイン"""
+    form_class = CustomLoginForm
+    template_name = 'customLogin/user_login.html'
+
+    def get(self, request, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/')
+        return super().get(request, **kwargs)
+
+class UserCreateDone(generic.TemplateView):
+    print("仮登録")
+    template_name = 'customLogin/user_create_done.html'
+    
+    def get(self, request, **kwargs):
+        #breakpoint()
+        #if request.user.is_authenticated:
+            
+       return HttpResponseRedirect('/')
+       # return super().get(request, **kwargs)
+
+class OTPAdmin(OTPAdminSite):
+    pass
+
+
+admin_site = OTPAdmin(name='OTPAdmin')
+admin_site.register(User)
+admin_site.register(TOTPDevice, TOTPDeviceAdmin)

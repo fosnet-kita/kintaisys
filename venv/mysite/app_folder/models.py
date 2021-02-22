@@ -52,6 +52,7 @@ class syain_info(models.Model):
     syainname = models.CharField('syainname', max_length=16)
     password = models.CharField('password', max_length=16,validators=[MinLengthValidator(8, '8文字以上です！'),
                                             RegexValidator(r'^[a-zA-Z0-9]*$', '英数字のみです！')])
+    email = models.CharField('email', max_length=16, default='1234@fosnet.co.jp')
     def __str__str(self1):
        return self1.syaincd
        
@@ -60,6 +61,10 @@ class syain_info(models.Model):
        
     def __str__str(self3):
        return self3.syainname
+       
+    def __str__str(self4):
+       return self4.email
+
        
 class kintai_touroku_info(models.Model):
     class Meta:
@@ -130,16 +135,4 @@ class kintai_touroku_info(models.Model):
     
     
     
-    
-    
-class project_uchiwake(models.Model):
-    class Meta:
-        db_table = 'project_uchiwake' # DB内で使用するテーブル名
-    tourokuno = models.CharField('tourokuno', max_length=16)
-    projectname = models.CharField('projectname', max_length=16)
-    kouteiname = models.CharField('kouteiname',  max_length=32)
-    workname = models.CharField('worktime',  max_length=32)
-    starttime = models.TimeField('starttime',  default='09:00')
-    endtime = models.TimeField('endtime',  default='17:30')
-    resttime        = models.DecimalField('resttime',max_digits=5, decimal_places=2 ,  default=0)
-    
+   
