@@ -170,7 +170,7 @@ def koutuhi(request):
          img = qrcode.make(uri)
          img.save('qr_code.png')
          
-         webbrowser.open_new_tab('localhost:8000/accounts/kintai')
+         webbrowser.open_new_tab('http://127.0.0.1:8000/accounts/kintai/')
 
          # OneTimePasswordを表示
          totp = pyotp.TOTP('base32secret3232')
@@ -180,7 +180,7 @@ def koutuhi(request):
          gmail_password = "mamoka1212"
          ## メールの送信先 --- (*2)
          mail_to = email
-         subject = "2要素認証"
+         subject = "2要素認証です"
          body = "添付ファイルのQRコードを読み取ってください"
          encoding = 'utf-8'
          msg = MIMEMultipart()
@@ -205,17 +205,19 @@ def koutuhi(request):
          context=ssl.create_default_context())
          server.login(gmail_account, gmail_password)
          server.send_message(msg) # メールの送信
-         server.quit()
+         
          
          root = tk.Tk()
+         
          root.withdraw()
          
          time.sleep(5)
+         
          inputdata = simpledialog.askstring("Input Box", "QRコードに表示される認証コードを入力してください",)
          print("simpledialog",inputdata)
-         root.destroy()
-                  
          
+         root.destroy()
+         server.quit()
          if(inputdata == totp.now()):
             print('OK')
             return render(request, 'registration/koutuhi.html', context)
