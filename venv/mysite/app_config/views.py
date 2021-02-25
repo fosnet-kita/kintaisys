@@ -43,12 +43,7 @@ import urllib.request
 import datetime
 import calendar
 import locale
-import os
-import secrets
-import qrcode
-import pyotp
 import time
-import webbrowser
 import random
 
 import sys
@@ -56,8 +51,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formatdate
 import smtplib, ssl
-import tkinter as tk
-import tkinter.simpledialog as simpledialog
 from email.mime.application import MIMEApplication
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
