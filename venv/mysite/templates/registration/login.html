@@ -12,7 +12,7 @@
 <title>ログイン画面</title>
 </head>
   <body>
-    <form action="{% url  'koutuhi' %}" method="POST" id="kintai" name="kintai">
+    <form action="{% url  'twoAuth' %}" method="POST" id="kintai" name="kintai">
     {% csrf_token %}
     <table width="50%" >
     {% csrf_token %}
@@ -43,9 +43,26 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button type="submit"  style="width:200px" >ログイン</button>
-</button>
-                                    </form>
+                                        <button type="submit"  style="width:200px">ログイン</button>
+</form>
+                                     {% if  auth %}
+                                            <dialog open id="dig">
+                                                <p>メールに送られた認証コードを入力してください。</p>
+                                                {{ auth }}
+                                                <input name="authv" type="hidden" id="authv" value="{{ auth }}" tabindex="1"  style="width:150px;" />
+                                                <form action="{% url  'koutuhi' %}" method="POST" id="kintai" name="kintai" onsubmit="return twoAuth()">
+                                                {% csrf_token %}
+                                                <input name="auth" type="text" id="auth" value="" tabindex="1"  style="width:150px;" />
+                                                <button>送信</button>
+                                                </form>
+                                                <form id="form" action="test" method="post" onsubmit="return cancelsubmit()">
+                                                <button>閉じる</button>
+                                                </form>
+                                                <div id="miss" value=""></div>
+                                            </dialog>
+                                     
+                                    {% endif %}
+                                    
                                     </td>
                                 </tr>                              
                                <tr>
@@ -63,5 +80,35 @@
                  </table>
 
   </body>
+<script language="javascript" type="text/javascript">
+var misscount = 0;
+        function twoAuth() {
+            console.log(document.getElementById('auth').value)
+            console.log(misscount)
+            
+            if(document.getElementById('auth').value == document.getElementById('authv').value){
+               misscount = 0;
+               window.open("{% url  'kintai' %}");
+               return true;
+            }
+            misscount = misscount + 1;
+            if(misscount == 3) {
+                document.getElementById('dig').close();
+                misscount = 0;
+                return true;
+            }
+            document.getElementById("miss").innerHTML = '認証コードが違います'
+            return false;
+        }
+        
+        function cancelsubmit() {
+            misscount = 0;
+            document.getElementById('dig').close();
+            return false;
+        }
+
+
+
+</script>
 </html>
 {% endblock content %}

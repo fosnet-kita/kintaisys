@@ -47,20 +47,11 @@ urlpatterns = [
     path('accounts/kintai/', views.kintaiload, name='kintai'),
     path('accounts/kintaiproject/', views.kintaiproject, name='kintaiproject'),
     path('accounts/kintaitouroku/', views.kintaitouroku, name='kintaitouroku'),
+    path('accounts/twoAuth/', views.twoAuth, name='twoAuth'),
     path('accounts/kintaiabs/', views.kintaiabs, name='kintaiabs'),
     path('accounts/kintaiload/', views.kintaiload, name='kintaiload'),
-    path('', views.display_qrcode, name='display_qrcode'),
     path('', include(tf_twilio_urls)),
     path('', include(tf_urls)),
-    path(r'user_create/', views.UserCreate.as_view(), name='user_create'),
-    #path(r'user_login/', views.CMStwoAuth, name='login'),
-    path(r'user_create/done', views.UserCreateDone.as_view(), name='user_create_done'),
-    path(r'user_create/complete/<token>/', views.UserCreateComplete.as_view(), name='user_create_complete'),
-    
-    #path('', views.filter, name='filter'),
-    #path('accounts/kintai/', views.kintaiv, name='kintaiv'),
-    #path('accounts/kintai/post/', views.post, name='post'),
-    #path('', TemplateView.as_view(template_name='home.html'), name='homeaaaaa'), # 追加
 ]
 
 # メディアファイル公開用のURL設定
