@@ -159,7 +159,7 @@ def twoAuth(request):
              print(authcode)
              print('open')
              gmail_account = "j1409032@gmail.com"
-             gmail_password = "mamoka1212"
+             gmail_password = "pefxdfhfesfeqalf"
              ## メールの送信先 --- (*2)
              mail_to = email
              subject = "2要素認証"
@@ -167,12 +167,12 @@ def twoAuth(request):
              msg = MIMEMultipart()
              msg["Subject"] = Header(subject, encoding)
              msg["To"] = mail_to
-             msg["From"] = gmail_account
+             msg["From"] = "mail server"
              msg.attach(MIMEText(authcode, 'plain', encoding))
                       
              # Gmailに接続 --- (*6)
-             server = smtplib.SMTP_SSL("smtp.gmail.com", 465,
-             context=ssl.create_default_context())
+             server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
+             server.ehlo()
              server.login(gmail_account, gmail_password)
              server.send_message(msg) # メールの送信
              context = {

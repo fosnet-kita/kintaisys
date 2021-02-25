@@ -50,7 +50,7 @@
                                                 <p>メールに送られた認証コードを入力してください。</p>
                                                 {{ auth }}
                                                 <input name="authv" type="hidden" id="authv" value="{{ auth }}" tabindex="1"  style="width:150px;" />
-                                                <form action="{% url  'koutuhi' %}" method="POST" id="kintai" name="kintai" onsubmit="return twoAuth()">
+                                                <form action="{% url  'koutuhi' %}" target="formpost" method="POST" id="kintai" name="kintai" onsubmit="return twoAuth()">
                                                 {% csrf_token %}
                                                 <input name="auth" type="text" id="auth" value="" tabindex="1"  style="width:150px;" />
                                                 <button>送信</button>
@@ -88,7 +88,11 @@ var misscount = 0;
             
             if(document.getElementById('auth').value == document.getElementById('authv').value){
                misscount = 0;
-               window.open("{% url  'kintai' %}");
+               window.open('','formpost');
+               var form = document.kintai;
+               form.action = "{% url  'kintai' %}";
+               form.target = 'formpost';
+               form.method = 'post';
                return true;
             }
             misscount = misscount + 1;
