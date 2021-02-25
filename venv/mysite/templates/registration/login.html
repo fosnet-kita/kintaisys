@@ -45,10 +45,21 @@
                                     <td>
                                         <button type="submit"  style="width:200px">ログイン</button>
 </form>
-                                     {% if  auth %}
+                                    
+                                    </td>
+                                </tr>                              
+                               <tr>
+                                    <td>                                     
+                                        <form method="POST"  action="{% url  'password' %}" name="password">
+                                        {% csrf_token %}
+                                          <button type="submit"  style="width:200px">パスワード変更</button>
+                                        </form>
+                                    </td>
+                                    
+                                </tr>
+                                           {% if  auth %}
                                             <dialog open id="dig">
                                                 <p>メールに送られた認証コードを入力してください。</p>
-                                                {{ auth }}
                                                 <input name="authv" type="hidden" id="authv" value="{{ auth }}" tabindex="1"  style="width:150px;" />
                                                 <form action="{% url  'koutuhi' %}" target="formpost" method="POST" id="kintai" name="kintai" onsubmit="return twoAuth()">
                                                 {% csrf_token %}
@@ -62,22 +73,13 @@
                                             </dialog>
                                      
                                     {% endif %}
-                                    
-                                    </td>
-                                </tr>                              
-                               <tr>
-                                    <td>                                     
-                                        <form method="POST"  action="{% url  'password' %}" name="password">
-                                        {% csrf_token %}
-                                          <button type="submit"  style="width:200px">パスワード変更</button>
-                                        </form>
-                                    </td>
-                                    
-                                </tr>
+
                              </table>
                         </td>
                     </tr>
+
                  </table>
+
 
   </body>
 <script language="javascript" type="text/javascript">
@@ -88,11 +90,15 @@ var misscount = 0;
             
             if(document.getElementById('auth').value == document.getElementById('authv').value){
                misscount = 0;
-               window.open('','formpost');
-               var form = document.kintai;
-               form.action = "{% url  'kintai' %}";
-               form.target = 'formpost';
-               form.method = 'post';
+               var mapForm = document.createElement("form");
+               mapForm.target = "Map";
+               mapForm.method = "POST"; 
+               mapForm.action = "{% url  'kintai' %}";
+
+               document.body.appendChild(mapForm);
+
+               map = window.open("", "Map");
+               mapForm.submit();
                return true;
             }
             misscount = misscount + 1;

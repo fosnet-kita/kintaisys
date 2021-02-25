@@ -173,6 +173,7 @@ def twoAuth(request):
              # Gmailに接続 --- (*6)
              server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
              server.ehlo()
+             print(gmail_password)
              server.login(gmail_account, gmail_password)
              server.send_message(msg) # メールの送信
              context = {
@@ -1441,6 +1442,7 @@ def kintaitouroku(request):
 #勤怠入力画面ロード   
 def kintaiload(request):
     template = loader.get_template('registration/kintai.html')
+    print(request.method)
     if request.method == 'POST':
         id = request.session.get('User','')
         nowyear = str(datetime.date.today().year)
