@@ -46,24 +46,23 @@
 			        
 <SCRIPT language="JavaScript">
 function popup_modeless(url){
-	var newWin = window.open(
-		url,    //移動先
-		"pop",  //ターゲット名（aタグのtargetと同様）
-		"width=600, height=480"
-	);
-	newWin.focus();
+        window.open('', 'new_window','width=420, height=250');
+        document.form2.action = '/accounts/koutuhilist/';
+        document.form2.method = 'POST';
+        document.form2.target = 'new_window';
+        document.form2.submit();
 }
 </SCRIPT>
                 <tr>
                     <table class="tbl_input margin_0_30_0_30" width="60%"></table>
                         <tr>
                            
-                            <form action="/accounts/koutuhilist/" method="post">
-                            {% csrf_token %}
                             <td class="lbl_indent height24" style="width:330px">
-                                <input type="button" name="ctl00$contents$imgKanriNo" value="入力済情報検索" onClick="popup_modeless('/accounts/koutuhilist/')" style="width:330px;" />
+                                <form name="form2">
+                                <input type="button" name="ctl00$contents$imgKanriNo" value="入力済情報検索" onClick="popup_modeless()" style="width:330px;" />
+                                </form>
                             </td> 
-                            </form>
+                            
                             
                             <th class="lbl_title3">交通費計
                                 <input name="transporttotal" type="text" id="transporttotal" class="txt_number" style="width:80px;" value="0" readonly/>

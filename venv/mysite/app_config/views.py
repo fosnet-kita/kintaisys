@@ -198,6 +198,7 @@ def koutuhi(request):
         print(authcode)
         if(authcode == inputcode):
             context = {
+                  'cus': listtori,
                   'user': id,
             }
             return render(request, 'registration/koutuhi.html', context)
