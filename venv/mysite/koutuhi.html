@@ -1,0 +1,632 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta http-equiv="Content-Language" content="ja" /><meta http-equiv="Content-Script-Type" content="text/javascript" /><meta http-equiv="Content-Style-Type" content="text/css" /><title>
+交通費一覧
+</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="./../../static/css/style.css">
+</head>
+   <table class="tbl_title" width="50%" style="text-align:center">
+                                <tr>
+                                    <td colspan="2" class="title">交通費一覧</td>
+                                </tr>
+    </table>
+	<div id="Input">
+		    <table>
+		     <form action="/accounts/koutuhisubmit/" method="post" id="touroku">
+		      {% csrf_token %}
+		        <tr>
+		            <td id="SyoriKbn">
+                        <table id="ctl00_contents_rdbSyorikbn" width="130%" border="0">
+	<tr>
+	社員CD:{{ user }}
+        <td><input id="ctl00_contents_rdbSyorikbn_0" type="radio" name="tourokukbn" value="登録" checked="checked" />
+            <label for="ctl00_contents_rdbSyorikbn_0">登録</label></td><td>
+            <input id="ctl00_contents_rdbSyorikbn_2" type="radio" name="tourokukbn" value="修正" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;tourokukbn$2\&#39;,\&#39;\&#39;)&#39;, 0)" />
+            <label for="ctl00_contents_rdbSyorikbn_2">修正</label></td><td>
+            <input id="ctl00_contents_rdbSyorikbn_3" type="radio" name="tourokukbn" value="削除" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;tourokukbn$3\&#39;,\&#39;\&#39;)&#39;, 0)" />
+            <label for="ctl00_contents_rdbSyorikbn_3">削除</label></td>
+        
+ 
+    </tr>
+          </table>
+                   
+                    <table class="tbl_input" width="60%">
+                        <td>
+                           
+                            <input type="button" name="kbnF" value="実行"  id="touroku" class="btn_normal" onclick="colsubmit('/accounts/koutuhisubmit/')" />
+                       </form> 
+                            <input type="submit" name="clear" value="クリア" id="ctl00_contents_btnClearF" onclick="colclear(this)" />
+                        
+                        </td>
+                     
+                </table>
+			    </tr>
+			        
+<SCRIPT language="JavaScript">
+function popup_modeless(url){
+	var newWin = window.open(
+		url,    //移動先
+		"pop",  //ターゲット名（aタグのtargetと同様）
+		"width=600, height=480"
+	);
+	newWin.focus();
+}
+</SCRIPT>
+                <tr>
+                    <table class="tbl_input margin_0_30_0_30" width="60%"></table>
+                        <tr>
+                           
+                            <form action="/accounts/koutuhilist/" method="post">
+                            {% csrf_token %}
+                            <td class="lbl_indent height24" style="width:330px">
+                                <input type="button" name="ctl00$contents$imgKanriNo" value="入力済情報検索" onClick="popup_modeless('/accounts/koutuhilist/')" style="width:330px;" />
+                            </td> 
+                            </form>
+                            
+                            <th class="lbl_title3">交通費計
+                                <input name="transporttotal" type="text" id="transporttotal" class="txt_number" style="width:80px;" value="0" readonly/>
+                            </th>   
+                        </tr>  
+                        
+                    </table>
+
+<div id="List">
+                交通費精算入力
+			    <table id="Table221" class="tbl_input margin_0_30_0_30" border="1">
+				    <tr>
+					    <th class="center" >日付(自)</th>
+					    <th class="center" >日付(至)</th>
+					    <th class="center" >訪問先／経路</th>
+					    <th class="center" >科目</th>
+					    <th class="center" >手段</th>
+					    <th class="center">交通費</th>
+					    <th class="center">客先請求</th>
+					    <th class="lbl_renketsu">&nbsp</th>
+				    </tr>
+				    <tr>
+                        <td>
+                            <input name="startdate" type="text" maxlength="8" id="startdate" class="txt_code" style="width:80px;" form="touroku"/>
+                            
+                        </td>
+                        <td>
+                            <input name="enddate" type="text" maxlength="8" id="enddate" class="txt_code" style="width:80px;" form="touroku"/>
+                            
+                        </td>
+                        <td>
+                            <input name="homon" type="text" maxlength="100" id="homon" class="txt_code" style="width:300px;"  form="touroku" /> 
+                        </td>
+                        <td>
+                            <select name="kamoku" id="kamoku" class="ddl_normal" style="width:100px;" form="touroku">
+	<option selected="selected" value=""></option>
+    <option value="交通費">交通費</option>
+	<option value="定期代">定期代</option>
+
+</select>
+                        </td>
+                        <td>
+			                <select name="syudan" id="syudan" class="ddl_normal" style="width:90px;" form="touroku">
+	<option selected="selected" value=""></option>
+	<option value="電車">電車</option>
+	<option value="車">車</option>
+	<option value="バス">バス</option>
+	<option value="タクシ">タクシー</option>
+	<option value="飛行機">飛行機</option>
+	<option value="その他">その他</option>
+
+</select><br />
+                           
+                        </td>
+                        <td>
+                            <input name="transport" type="text" maxlength="9" id="transport" class="txt_number" style="width:80px;" form="touroku"/>
+                        </td>
+                        <td align="center">
+                            <span style="display:inline-block;width:30px;"><input id="KSeikyu" type="checkbox" name="seikyu" form="touroku"/></span>
+                        </td>
+                        <td>
+                            <input type="submit" value="更新" id="coladd" onclick="colupdate()"><br />
+                            <input type="submit" value="追加" id="coladd" onclick="coladd()"><br />
+                        </td>
+				    </tr>
+
+			    </table>
+入力済交通費
+			    <table id="tablesumi" name="tablesumi" border="1" form="touroku">
+                        <tr>
+					    <th class="center"style="width:80px;">日付(自)</th>
+					    <th class="center"style="width:80px;">日付(至)</th>
+					    <th class="center"style="width:300px;">訪問先／経路</th>
+					    <th class="center"style="width:100px;">科目</th>
+					    <th class="center"style="width:90px;">手段</th>
+					    <th class="center">交通費</th>
+					    <th class="center">客先請求</th>
+					    <th class="lbl_renketsu">&nbsp</th>
+				    </tr>
+
+</table>
+			  
+            </div>
+            <br>
+<script>
+
+tr = 0;
+rowId = 0;
+idmax = 0;
+    function coladd() {
+    
+    var table = document.getElementById("tablesumi");
+    
+    var v1 = document.getElementById("startdate").value;
+    var v2 = document.getElementById("enddate").value;
+    var v3 = document.getElementById("homon").value;
+    var v4 = document.getElementById("kamoku").value;
+    var v5 = document.getElementById("syudan").value;
+    var v6 = document.getElementById("transport").value;
+    var v7 = document.getElementById("KSeikyu").checked;
+    var errflg = false;
+    
+    document.getElementById("error1").innerHTML  = "";
+    document.getElementById("error2").innerHTML  = "";
+    document.getElementById("error3").innerHTML  = "";
+    document.getElementById("error4").innerHTML  = "";
+    document.getElementById("error5").innerHTML  = "";
+    document.getElementById("error6").innerHTML  = "";
+    document.getElementById("error7").innerHTML  = "";
+    document.getElementById("error8").innerHTML  = "";
+    document.getElementById("error9").innerHTML  = "";
+    
+ 
+    //年,月,日を取得する
+    var y1 = parseInt(v1.substr(0,4));
+    var m1 = parseInt(v1.substr(4,2)) -1;  //月は0～11で指定するため-1しています。
+    var d1 = parseInt(v1.substr(6,2));
+    var dt1 = new Date(y1, m1, d1);
+ 
+    //判定する
+    if (y1 != dt1.getFullYear() || m1 != dt1.getMonth() || d1 != dt1.getDate()) {
+       document.getElementById("error2").innerHTML  = "開始日付は無効な日付です";
+       errflg = true;
+    }
+    
+    if(v2==null || v2.length != 8 || isNaN(v2)){
+        document.getElementById("error3").innerHTML  = "終了日付は8文字で入力してください";
+        errflg = true;
+    }
+ 
+    //年,月,日を取得する
+    var y2 = parseInt(v2.substr(0,4));
+    var m2 = parseInt(v2.substr(4,2)) -1;  //月は0～11で指定するため-1しています。
+    var d2 = parseInt(v2.substr(6,2));
+    var dt2 = new Date(y2, m2, d2);
+ 
+    //判定する
+    if (y2 != dt2.getFullYear() || m2 != dt2.getMonth() || d2 != dt2.getDate()) {
+       document.getElementById("error4").innerHTML  = "終了日付は無効な日付です";
+       errflg = true;
+    }
+    
+    if (v3 == "") {
+      document.getElementById("error5").innerHTML  = "訪問先/経路を入力してください";
+      errflg = true;
+    }
+    
+    
+    if (v4 == "") {
+      document.getElementById("error6").innerHTML  = "科目を入力してください";
+      errflg = true;
+    }
+    
+    if (v5 == "") {
+      document.getElementById("error7").innerHTML  = "手段を入力してください";
+      errflg = true;
+    }
+    
+    if(v6== "" ||  isNaN(v6)){
+        document.getElementById("error8").innerHTML  = "交通費は数字で入力してください";
+        errflg = true;
+    }
+    
+    
+    if(errflg) {
+       return;
+    }
+    
+
+    var row = table.insertRow(-1);
+    var tablerows = table.rows.length;
+    var cell1 = row.insertCell(-1);
+    var cell2 = row.insertCell(-1);
+    var cell3 = row.insertCell(-1);
+    var cell4 = row.insertCell(-1);
+    var cell5 = row.insertCell(-1);
+    var cell6 = row.insertCell(-1);
+    var cell7 = row.insertCell(-1);
+    var cell8 = row.insertCell(-1);
+    var cell9 = row.insertCell(-1);
+    tablerows = tablerows - 1;
+    idmax = idmax + 1;
+    cell1.innerHTML = '<input class="inpval" type="text"   id="startdate' + tablerows + '" name="startdatelist" value="' + v1+ '"  style="width:80px;"form="touroku" readonly>'
+    cell2.innerHTML = '<input class="inpval" type="text"   id="enddate' + tablerows + '" name="enddatelist" value="' + v2+ '" size="30" style="width:80px;" form="touroku" readonly>';
+    cell3.innerHTML = '<input class="inpval" type="text"   id="homon' + tablerows + '" name="homonlist" value="' + v3+ '"  style="width:300px;" form="touroku" readonly>';
+    
+    cell4.innerHTML = '<input class="inpval" type="text"   id="kamoku' + tablerows + '" name="kamokulist" value="' + v4 + '"  style="width:80px;" form="touroku" readonly>';
+    
+    cell5.innerHTML = '<input class="inpval" type="text"   id="syudan' + tablerows + '" name="syudanlist" value="' + v5 + '"  style="width:80px;" form="touroku" readonly>';
+    cell6.innerHTML = '<input class="inpval" type="text"   id="transport' + tablerows + '" name="transportlist" value="' + v6 + '"  style="width:80px;" form="touroku" readonly>';
+    
+    
+    var  aaa = 0;
+    
+    console.log(idmax);
+    for (var i = 1; i <= tablerows; i++) {
+       console.log(document.getElementById("transport"+ i))
+       if(document.getElementById("transport"+ i) != null) {
+          aaa  += eval( document.getElementById("transport"+ i).value);
+          console.log(aaa);
+       }
+       
+    }
+    document.getElementById("transporttotal").value = aaa;
+    
+   
+    if(v7 == true) {
+       cell7.innerHTML = '<input class="inpval" type="text"   id="KSeikyu' + idmax + '" name="seikyulist" value="有"  style="width:80px;" form="touroku" readonly>';
+    } else {
+       cell7.innerHTML = '<input class="inpval" type="text"   id="KSeikyu' + idmax + '" name="seikyulist" value="無"  style="width:80px;" form="touroku" readonly>';;    
+    }
+    cell8.innerHTML = '<input type="button" value="編集" id="coledit" onclick="coledit(this)"><br><input type="button" value="削除" id="coladd" onclick="coldel(this)">'
+}
+
+    function coledit(obj) {
+    
+        var rowid = document.getElementById("tablesumi");
+        tr = obj.parentNode.parentNode;
+        rowId = tr.sectionRowIndex;
+        var v1 = document.getElementById("startdate").value;
+        var v2 = document.getElementById("enddate").value;
+        var v3 = document.getElementById("homon").value;
+        var v4 = document.getElementById("kamoku").value;
+        var v5 = document.getElementById("syudan").value;
+        var v6 = document.getElementById("transport").value;
+        var v7 = document.getElementById("KSeikyu").value;
+        
+        document.getElementById("error1").innerHTML  = "";
+        document.getElementById("error2").innerHTML  = "";
+        document.getElementById("error3").innerHTML  = "";
+        document.getElementById("error4").innerHTML  = "";
+        document.getElementById("error5").innerHTML  = "";
+        document.getElementById("error6").innerHTML  = "";
+        document.getElementById("error7").innerHTML  = "";
+        document.getElementById("error8").innerHTML  = "";
+        document.getElementById("error9").innerHTML  = "";
+        
+        document.getElementById("startdate").value = "";
+        document.getElementById("enddate").value  = "";
+        document.getElementById("homon").value    = "";
+        document.getElementById("kamoku").value   = "";
+        document.getElementById("syudan").value   = "";
+        document.getElementById("transport").value= "";
+        document.getElementById("KSeikyu").checked= false;
+
+        
+        console.log(rowId);
+        var e1 = document.getElementById("startdate" + rowId);
+        var e2 = document.getElementById("enddate" + rowId);
+        var e3 = document.getElementById("homon" + rowId);
+        var e4 = document.getElementById("kamoku"+ rowId);
+        var e5 = document.getElementById("syudan"+ rowId);
+        var e6 = document.getElementById("transport" + rowId);
+        var e7 = document.getElementById("KSeikyu"+ rowId);
+        console.log(e1.value);
+        document.getElementById("startdate").value = e1.value;
+        document.getElementById("enddate").value = e2.value;
+        document.getElementById("homon").value  = e3.value;
+        document.getElementById("kamoku").value = e4.value;
+        document.getElementById("syudan").value = e5.value;
+        document.getElementById("transport").value = e6.value;
+        if(e7.value == "有") {
+            document.getElementById("KSeikyu").checked = e7.value;
+        }
+    }
+    
+    function colupdate(obj) {
+        var table = document.getElementById("tablesumi");
+        var v1 = document.getElementById("startdate").value;
+        var v2 = document.getElementById("enddate").value;
+        var v3 = document.getElementById("homon").value;
+        var v4 = document.getElementById("kamoku").value;
+        var v5 = document.getElementById("syudan").value;
+        var v6 = document.getElementById("transport").value;
+        var v7 = document.getElementById("KSeikyu").checked;
+        var len = table.rows.length - 1;
+        var errflg = false;
+        
+        document.getElementById("error1").innerHTML  = "";
+        document.getElementById("error2").innerHTML  = "";
+        document.getElementById("error3").innerHTML  = "";
+        document.getElementById("error4").innerHTML  = "";
+        document.getElementById("error5").innerHTML  = "";
+        document.getElementById("error6").innerHTML  = "";
+        document.getElementById("error7").innerHTML  = "";
+        document.getElementById("error8").innerHTML  = "";
+        document.getElementById("error9").innerHTML  = "";
+
+    
+    if(v1==null || v1.length != 8 || isNaN(v1)){
+        document.getElementById("error1").innerHTML  = "開始日付は8文字で入力してください";
+        errflg = true;
+    }
+ 
+    //年,月,日を取得する
+    var y1 = parseInt(v1.substr(0,4));
+    var m1 = parseInt(v1.substr(4,2)) -1;  //月は0～11で指定するため-1しています。
+    var d1 = parseInt(v1.substr(6,2));
+    var dt1 = new Date(y1, m1, d1);
+ 
+    //判定する
+    if (y1 != dt1.getFullYear() || m1 != dt1.getMonth() || d1 != dt1.getDate()) {
+       document.getElementById("error2").innerHTML  = "開始日付は無効な日付です";
+       errflg = true;
+    }
+    
+    if(v2==null || v2.length != 8 || isNaN(v2)){
+        document.getElementById("error3").innerHTML  = "終了日付は8文字で入力してください";
+        errflg = true;
+    }
+ 
+    //年,月,日を取得する
+    var y2 = parseInt(v2.substr(0,4));
+    var m2 = parseInt(v2.substr(4,2)) -1;  //月は0～11で指定するため-1しています。
+    var d2 = parseInt(v2.substr(6,2));
+    var dt2 = new Date(y2, m2, d2);
+ 
+    //判定する
+    if (y2 != dt2.getFullYear() || m2 != dt2.getMonth() || d2 != dt2.getDate()) {
+       document.getElementById("error4").innerHTML  = "終了日付は無効な日付です";
+       errflg = true;
+    }
+    
+    
+    if (v4 == "") {
+      document.getElementById("error5").innerHTML  = "科目を入力してください";
+      errflg = true;
+    }
+    
+    if (v5 == "") {
+      document.getElementById("error6").innerHTML  = "手段を入力してください";
+      errflg = true;
+    }
+    
+    if(v6== "" ||  isNaN(v6)){
+        document.getElementById("error7").innerHTML  = "交通費は数字で入力してください";
+        errflg = true;
+    }
+    console.log(rowId);
+    
+    if(errflg) {
+       return;
+    }
+   
+        document.getElementById("startdate" + rowId).value = v1;
+        document.getElementById("enddate" + rowId).value =   v2;
+        document.getElementById("homon" + rowId).value =     v3;
+        document.getElementById("kamoku"+ rowId).value =     v4;
+        document.getElementById("syudan"+ rowId).value =     v5;
+        document.getElementById("transport" + rowId).value = v6;
+        
+        if(v7 == true) {
+            document.getElementById("KSeikyu"+ rowId).value =  "有";
+        } else {
+           document.getElementById("KSeikyu"+ rowId).value =  "無";
+        }
+        
+    var  aaa = 0;
+    document.getElementById("transporttotal").value = 0;
+    for (i = 1; i < table.rows.length; i++) {
+       if(document.getElementById("transport"+ i) == null) {
+           continue;
+       }
+       aaa  += eval( document.getElementById("transport"+ i).value);
+       console.log(aaa);
+    }
+    document.getElementById("transporttotal").value = aaa;
+        
+    document.getElementById("startdate").value = "";
+    document.getElementById("enddate").value  = "";
+    document.getElementById("homon").value    = "";
+    document.getElementById("kamoku").value   = "";
+    document.getElementById("syudan").value   = "";
+    document.getElementById("transport").value= "";
+    document.getElementById("KSeikyu").checked= false;
+
+    }
+
+    function coldel(obj) {
+    
+        var table = document.getElementById("tablesumi");
+        
+        document.getElementById("error1").innerHTML  = "";
+        document.getElementById("error2").innerHTML  = "";
+        document.getElementById("error3").innerHTML  = "";
+        document.getElementById("error4").innerHTML  = "";
+        document.getElementById("error5").innerHTML  = "";
+        document.getElementById("error6").innerHTML  = "";
+        document.getElementById("error7").innerHTML  = "";
+        document.getElementById("error8").innerHTML  = "";
+        document.getElementById("error9").innerHTML  = "";
+
+        
+        // 削除ボタンを押下された行を取得
+        tr = obj.parentNode.parentNode;
+        console.log(tr.sectionRowIndex);
+        
+        var bbb = tr.sectionRowIndex;
+         while (document.getElementById("transport" + bbb) == null) {
+         
+           bbb = bbb + 1;
+         }
+         console.log(document.getElementById("transport" + bbb).value);
+         document.getElementById("transporttotal").value = document.getElementById("transporttotal").value - document.getElementById("transport" + bbb).value;
+        // trのインデックスを取得して行を削除する
+        console.log(tr.sectionRowIndex);
+        var trno = tr.sectionRowIndex;
+        tr.parentNode.deleteRow(tr.sectionRowIndex);
+        
+        console.log(table.rows.length);
+        for(var i = trno; i <= table.rows.length; i++) {
+           
+           if(document.getElementById("transport"+ i) == null) {
+                continue;
+           }
+           console.log(i);
+           var j = i - 1;
+           document.getElementById("startdate" + i).id = "startdate" + j;
+           document.getElementById("enddate" + i).id = "enddate" + j;
+           document.getElementById("homon" + i).id =  "homon" + j;
+           document.getElementById("kamoku"+ i).id =  "kamoku" + j;
+           document.getElementById("syudan"+ i).id =  "syudan" + j;
+           document.getElementById("transport" + i).id = "transport" + j;
+           document.getElementById("KSeikyu"+ i).id = "KSeikyu"+ j;
+        
+       }
+         
+    }
+    
+   function colclear(obj) {
+        document.getElementById("startdate").value = "";
+        document.getElementById("enddate").value = "";
+        document.getElementById("homon").value = "";
+        document.getElementById("kamoku").value = "";
+        document.getElementById("syudan").value = "";
+        document.getElementById("transport").value = "";
+        document.getElementById("KSeikyu").checked = false;
+        
+        document.getElementById("error1").innerHTML  = "";
+        document.getElementById("error2").innerHTML  = "";
+        document.getElementById("error3").innerHTML  = "";
+        document.getElementById("error4").innerHTML  = "";
+        document.getElementById("error5").innerHTML  = "";
+        document.getElementById("error6").innerHTML  = "";
+        document.getElementById("error7").innerHTML  = "";
+        document.getElementById("error8").innerHTML  = "";
+        document.getElementById("error9").innerHTML  = "";
+
+        
+        document.getElementById("transporttotal").value = 0;
+        
+         var table = document.getElementById("tablesumi");
+         console.log(table.rows.length);
+         var len = table.rows.length;
+         for (var i = 1; i < len; i++) {
+              table.deleteRow(-1);
+         }
+    }
+    
+    
+   function colsubmit(url) {
+        var table = document.getElementById("tablesumi");
+        var v1 = document.getElementById("startdate").value;
+        var v2 = document.getElementById("enddate").value;
+        var v3 = document.getElementById("homon").value;
+        var v4 = document.getElementById("kamoku").value;
+        var v5 = document.getElementById("syudan").value;
+        var v6 = document.getElementById("transport").value;
+        var v7 = document.getElementById("KSeikyu").checked;
+        if(table.rows.length < 2) {
+         document.getElementById("error9").innerHTML  = "精算入力がされていません";
+         return false;
+        
+        }
+        for (i = 1; i < table.rows.length; i++) {
+            if(document.getElementById("KSeikyu"+ i) == null) {
+                 
+                 continue;
+             }  
+            if(document.getElementById("KSeikyu"+ i).value == "有" && document.getElementById("torihiki").value == "") {
+                document.getElementById("error9").innerHTML  = "取引先を選択してください";
+                return false;
+            }
+        }
+   document.getElementById('touroku').submit(url)
+   
+   }
+</script>
+            <table width="100%">
+		        
+            </table>
+            
+			<div>
+                <div id="ctl00_contents_Panel1" style="overflow:auto;">
+	
+                 	<table>
+			            <tr>
+                            <td>
+                            </td>
+                            <td>
+                                
+                                <span id="ctl00_contents_lblBr1" class="invisible"><br/></span>
+                                <span id="ctl00_contents_lblBr2" class="invisible"><br/></span>
+                                
+                            </td>
+                        </tr>
+                    </table>
+                
+</div>
+		    </div>
+			<table id="Table3" class="margin_0_30_0_30">
+		        <tr>
+				    <td valign="top">
+						<table id="Table31" class="tbl_input">
+				            <tr>
+                                <th class="lbl_title3">取引先</th>
+                                <td class="lbl_indent height24">
+                                <select name="torihiki" id="torihiki" class="ddl_normal" style="width:100px;" form="touroku">
+                                <option selected="selected" value=""></option>
+                                {% for pr in cus %}
+                    	           <option  value="{{ pr.customname }}">
+            			           {{ pr.customname }}
+            			            </option>
+                                {% endfor %}
+                                </select>
+                                </td>
+                                        <th class="lbl_title3">精算方法</th>
+                                        <td class="lbl_indent height24">
+                                            <select name="seisan" id="ctl00_contents_ddlPayKbn" class="ddl_normal" style="width:100px;"form="touroku">
+            <option value="現金"  name="seisan" form="touroku">現金</option>
+            <option selected="selected" value="口座振込"  name="seisan" form="touroku">口座振込</option>
+
+        </select>
+                                        </td>  
+
+</select>
+                                    
+                                </td>
+                            </tr>
+ 
+						</table>
+					</td>
+            <table id="Table4" class="tbl_title" width="100%">
+                <tr>
+                    <td class="left">
+                        <div id="error1" class="error" style="color:red"></div>
+                        <div id="error2" class="error" style="color:red"></div>
+                        <div id="error3" class="error" style="color:red"></div>
+                        <div id="error4" class="error" style="color:red"></div>
+                        <div id="error5" class="error" style="color:red"></div>
+                        <div id="error6" class="error" style="color:red"></div>
+                        <div id="error7" class="error" style="color:red"></div>
+                        <div id="error8" class="error" style="color:red"></div>
+                        <div id="error9" style="color:red">
+		                {{ error }}
+		                {{ message }}
+		                </div>
+                    </td>
+                </tr>
+                
+            </table>
+		</div>
+    </div>
+            </div>
+    </body>
+</html>
