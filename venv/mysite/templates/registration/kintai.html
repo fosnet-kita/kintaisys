@@ -9,7 +9,7 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript; charset=UTF-8" />
     <meta http-equiv="Content-Style-Type"  content="text/css" />
 </head>
-<table class="tbl_title" width="40%" style="text-align:center">
+<table class="tbl_title" width="50%" style="text-align:center">
                                 <tr>
                                     <td colspan="2" class="title">勤怠入力</td>
                                 </tr>
@@ -26,6 +26,7 @@ style="border-color:#D0D0D0;border-style:Solid;display:inline-block;">
                         <form action="{% url  'kintaiload' %}" method="post" id="load">
                         {% csrf_token %}
                         <input type="date" name = "dateselect" id="caldate"  onchange="this.form.submit();" value ="{{ ymd }}"  />
+                        <input type="hidden" name = "User" id="User"  value ="{{ user }}">
                         </form>
             <span id="week" name="week" form="kintaitouroku"></span>
 			            <th class="lbl_title4" style="width:78px">始業時刻</th>
@@ -136,6 +137,8 @@ function project(){
                                 <input id="holiday" name="holiday" type="hidden" value="{{ holiday }}">
                                 <input id="holidaykbn" name="holidaykbn" type="hidden" value="{{ holidaykbn }}">
                                 <input id="riyu" name="riyu" type="hidden" value="{{ riyu }}">
+                                <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
+                                <input name="dateselect" id="dateselect" type="hidden" maxlength="8" value="{{ ymd }}" >
 <div id="projectname1"></div>
 {% if  projectname1 %}
                                     <table class="tbl_input" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdMeisai" style="border-collapse:collapse;">
@@ -505,10 +508,10 @@ function calc(start,end,resttotal){
                                             <th scope="col">開始時間</th>
                                             <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
                                                 <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
-                                                                                        <input name="starttime3" type="time" id="starttime3" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        <input name="starttime3" type="time" id="starttime3" tabindex="2"  value="{{ starttime3 }}" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
                                                                                             <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
-                                                                                            <input name="endtime3" type="time" id="endtime3" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                            <input name="endtime3" type="time" id="endtime3" tabindex="2" value="{{ endtime3 }}" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
                                                                                             <input name="resttime3" type="text"  id="resttime3" value="{{ resttime3 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" readonly/> 
                                                                                         </td>
@@ -547,7 +550,7 @@ function calc(start,end,resttotal){
                                                                                         <th scope="col" style="width:50px">業務</th>
                                                                                             <td colspan="2">
                                                                                             
-                                                                                                <select name="ctl00$contents$ddlGyoumu" id="ctl00_contents_ddlGyoumu" class="ddl_normal" style="width:100%;">
+                                                                                                <select name="workname4" id="workname4" class="ddl_normal" style="width:100%;">
                                                                                                 <option ></option>
                                                                                                 {% for pr in gyomu4 %}
                                                                                                 {% if  gyomuselect4 ==   pr.workname %}
@@ -563,10 +566,10 @@ function calc(start,end,resttotal){
                                             <th scope="col">開始時間</th>
                                             <td class="txt_code_indent" align="center" valign="middle" style="background-color:White;width:100px;white-space:nowrap;text-align: center;">
                                                 <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
-                                                                                        <input name="starttime4" type="time" id="starttime4" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                        <input name="starttime4" type="time" id="starttime4" value="{{ starttime4 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         <th scope="col">終了時間</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
                                                                                             <span id="ctl00_contents_grdMeisai_ctl03_lblMeisaiHmsF"></span>
-                                                                                            <input name="endtime4" type="time" id="endtime4" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
+                                                                                            <input name="endtime4" type="time" id="endtime4" value="{{ endtime4 }}" tabindex="2" class="txt_code" style="width:70px;" onchange="start(this.value)"/>
                                                                                         </td><th scope="col">休憩(h)</th><td class="center" valign="middle" style="background-color:White;width:60px;text-align: center;">
                                                                                             <input name="resttime4" type="text" id="resttime4" value="{{ resttime4 }}" tabindex="2" class="txt_code" style="width:70px;" form="kintaitouroku" readonly/>
                                                                                         </td>
@@ -594,7 +597,9 @@ function calc(start,end,resttotal){
                                      
                                       
                                             <input type="submit" name="ctl00$contents$btnDeleteH" value="一覧出力" id="ctl00_contents_btnDeleteH" class="btn_normal2" style="width:100%"/>
-                                           
+                                            <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
+                                            <input name="dateselect" id="dateselect" type="hidden" maxlength="8" value="{{ ymd }}" >
+
                                             
                                         
                                     </form>

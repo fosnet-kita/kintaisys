@@ -3,12 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./../../static/css/output.css">
     <link rel="stylesheet" href="./../../static/css/style.css">
     <title>一覧出力</title>
 
 </head>
-<table class="tbl_title" width="40%" style="text-align:center">
+<table class="tbl_title" width="150%" style="text-align:center">
                                 <tr>
                                     <td colspan="2" class="title">一覧出力</td>
                                 </tr>
@@ -18,14 +19,16 @@
     <form action="{% url  'kintaiload' %}" method="POST" id="kintaitouroku" name="kintaitouroku">
     {% csrf_token %}
     <input type="submit" style="width:139px;" valign="middle" value="戻る"  name= "project" id="project"  class="btn_normal" />
+    <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
+    <input name="dateselect" id="dateselect" type="hidden" value="{{ ymd }}" >
     </form>
     出力月
     <form action="{% url  'output2' %}" method="post">
     {% csrf_token %}
     <input type="month" name="monthselect" onchange="submit()" value="{{ monthselect }}">
-
-
-        <table id="Table22" class="tbl_input">
+    <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
+    <input name="dateselect" id="dateselect" type="hidden" value="{{ ymd }}" >
+        <table id="Table22" class="tbl_input" style="width:600px;">
                     <tr>
 			            <th class="lbl_title4" style="width:39px">日</th>
 			            <th class="lbl_title4" style="width:38px">曜日</th>
@@ -40,7 +43,7 @@
                     </tr>
                 </table>
         
-        <table class="output22" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdCalendar" style="border-collapse:collapse;">
+        <table class="output22" cellspacing="0" rules="all" border="1" id="ctl00_contents_grdCalendar" style="border-collapse:collapse;width:600px;">
         {% for pr in listaaaa %}
         {% if pr.ymd %}
 		<tr class="{{ pr.ymd  | date:"D"}}">

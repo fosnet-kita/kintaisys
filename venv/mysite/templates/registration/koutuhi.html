@@ -13,12 +13,11 @@
                                 </tr>
     </table>
 	<div id="Input">
-		    <table>
 		     <form action="/accounts/koutuhisubmit/" method="post" id="touroku">
 		      {% csrf_token %}
 		        <tr>
 		            <td id="SyoriKbn">
-                        <table id="ctl00_contents_rdbSyorikbn" width="130%" border="0">
+                        <table id="ctl00_contents_rdbSyorikbn" width="80%" border="0">
 	<tr>
 	社員CD:{{ user }}
         <td><input id="ctl00_contents_rdbSyorikbn_0" type="radio" name="tourokukbn" value="登録" checked="checked" />
@@ -28,7 +27,7 @@
             <input id="ctl00_contents_rdbSyorikbn_3" type="radio" name="tourokukbn" value="削除" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;tourokukbn$3\&#39;,\&#39;\&#39;)&#39;, 0)" />
             <label for="ctl00_contents_rdbSyorikbn_3">削除</label></td>
         
- 
+    <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
     </tr>
           </table>
                    
@@ -54,12 +53,13 @@ function popup_modeless(url){
 }
 </SCRIPT>
                 <tr>
-                    <table class="tbl_input margin_0_30_0_30" width="60%"></table>
+                    <table class="tbl_input margin_0_30_0_30" width="80%"></table>
                         <tr>
                            
                             <td class="lbl_indent height24" style="width:330px">
                                 <form name="form2">
                                 <input type="button" name="ctl00$contents$imgKanriNo" value="入力済情報検索" onClick="popup_modeless()" style="width:330px;" />
+                                <input name="User" id="User" type="hidden" maxlength="8" value="{{ user }}" >
                                 </form>
                             </td> 
                             
@@ -73,7 +73,7 @@ function popup_modeless(url){
 
 <div id="List">
                 交通費精算入力
-			    <table id="Table221" class="tbl_input margin_0_30_0_30" border="1">
+			    <table id="Table221" width="80%" class="tbl_input margin_0_30_0_30" border="1">
 				    <tr>
 					    <th class="center" >日付(自)</th>
 					    <th class="center" >日付(至)</th>
@@ -94,7 +94,7 @@ function popup_modeless(url){
                             
                         </td>
                         <td>
-                            <input name="homon" type="text" maxlength="100" id="homon" class="txt_code" style="width:300px;"  form="touroku" /> 
+                            <input name="homon" type="text" maxlength="100" id="homon" class="txt_code" style="width:200px;"  form="touroku" /> 
                         </td>
                         <td>
                             <select name="kamoku" id="kamoku" class="ddl_normal" style="width:100px;" form="touroku">
@@ -135,7 +135,7 @@ function popup_modeless(url){
                         <tr>
 					    <th class="center"style="width:80px;">日付(自)</th>
 					    <th class="center"style="width:80px;">日付(至)</th>
-					    <th class="center"style="width:300px;">訪問先／経路</th>
+					    <th class="center"style="width:200px;">訪問先／経路</th>
 					    <th class="center"style="width:100px;">科目</th>
 					    <th class="center"style="width:90px;">手段</th>
 					    <th class="center">交通費</th>
@@ -175,7 +175,15 @@ idmax = 0;
     document.getElementById("error8").innerHTML  = "";
     document.getElementById("error9").innerHTML  = "";
     
- 
+    
+    
+    if(v1==null || v1.length != 8 || isNaN(v1)){
+        document.getElementById("error1").innerHTML  = "開始日付は8文字で入力してください";
+        errflg = true;
+    }
+
+    
+    
     //年,月,日を取得する
     var y1 = parseInt(v1.substr(0,4));
     var m1 = parseInt(v1.substr(4,2)) -1;  //月は0～11で指定するため-1しています。
@@ -275,6 +283,16 @@ idmax = 0;
        cell7.innerHTML = '<input class="inpval" type="text"   id="KSeikyu' + idmax + '" name="seikyulist" value="無"  style="width:80px;" form="touroku" readonly>';;    
     }
     cell8.innerHTML = '<input type="button" value="編集" id="coledit" onclick="coledit(this)"><br><input type="button" value="削除" id="coladd" onclick="coldel(this)">'
+    
+    
+    document.getElementById("startdate").value = "";
+    document.getElementById("enddate").value  = "";
+    document.getElementById("homon").value    = "";
+    document.getElementById("kamoku").value   = "";
+    document.getElementById("syudan").value   = "";
+    document.getElementById("transport").value= "";
+    document.getElementById("KSeikyu").checked= false;
+
 }
 
     function coledit(obj) {

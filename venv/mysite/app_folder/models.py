@@ -53,6 +53,7 @@ class syain_info(models.Model):
     password = models.CharField('password', max_length=16,validators=[MinLengthValidator(8, '8文字以上です！'),
                                             RegexValidator(r'^[a-zA-Z0-9]*$', '英数字のみです！')])
     email = models.CharField('email', max_length=16, default='1234@fosnet.co.jp')
+    phonenumber = models.CharField('phonenumber', max_length=16, default='12345678')
     def __str__str(self1):
        return self1.syaincd
        
@@ -64,6 +65,10 @@ class syain_info(models.Model):
        
     def __str__str(self4):
        return self4.email
+       
+    def __str__str(self5):
+       return self5.phonenumber
+
 
        
 class kintai_touroku_info(models.Model):

@@ -106,9 +106,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'hello_app',
-        'USER': 'admin',
+        'USER': 'fosnet',
         'PASSWORD': 'Mamoka049',
-        'HOST': '127.0.0.1',
+        'HOST': 'database-kintai.ccpuf07e7m9k.ap-northeast-1.rds.amazonaws.com',
         'POST': '5432'
     }
 }
